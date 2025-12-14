@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="progressBarMyEvents" type="id">progressbar</item>
+    <item name="tvTitle" type="id">title</item>
+    <item name="imgPoster" type="id">poster</item>
+    <item name="tvKategori" type="id">kategori</item>
+    <item name="tvTanggal" type="id">tanggal</item>
+    <item name="tvDate" type="id">date</item>
+</resources>
