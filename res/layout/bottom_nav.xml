@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gunakan LinearLayout sebagai root karena isinya hanya baris horizontal -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="horizontal"
+    android:background="#FFFFFF"
+    android:padding="8dp"
+    android:elevation="8dp">
+
+    <!--
+    PENTING:
+    1. layout_width="0dp" dan layout_weight="1" digunakan untuk membagi ruang secara merata.
+    2. Jangan gunakan layout_width="match_parent" pada item di dalam LinearLayout dengan weight.
+    -->
+
+    <ImageView
+        android:id="@+id/navHome"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:src="@drawable/nav_home_selector"
+        android:contentDescription="Home" />
+
+    <ImageView
+        android:id="@+id/navEvent"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:src="@drawable/nav_event_selector"
+        android:contentDescription="Events" />
+
+    <ImageView
+        android:id="@+id/navOrg"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:src="@drawable/nav_org_selector"
+        android:contentDescription="Organization" />
+
+    <ImageView
+        android:id="@+id/navProfile"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:src="@drawable/nav_profile_selector"
+        android:contentDescription="Profile" />
+
+</LinearLayout>
