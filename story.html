@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KATA — Story Viewer</title>
+<style>
+  :root {
+    --bg-top: #eaf9d5;
+    --bg-bottom: #b8e3b5;
+    --brand: #0b6b56;
+    --brand-2: #16a085;
+    --ink: #133029;
+    --muted: #5f6f66;
+    --paper: #fff;
+    --ring: #e7ede7;
+    --shadow: 0 10px 28px rgba(17,43,33,.18);
+  }
+  *{ box-sizing:border-box }
+  body{
+    margin:0; font-family:'Poppins',system-ui,Arial;
+    background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom)); color:#133029
+  }
+  a{ color:inherit; text-decoration:none }
+
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+  /* MOBILE NAV */
+  .hamburger{ display:none; cursor:pointer; margin-left:auto }
+  .hamburger div{ width:24px; height:3px; background:var(--ink); margin:5px 0; transition:.3s }
+  .mobile-nav{
+    display:flex; flex-direction:column; padding:0 16px; gap:12px;
+    max-height:0; overflow:hidden; background:#fff; transition:max-height .4s ease;
+    border-bottom:1px solid #e5efe7;
+  }
+  .mobile-nav a{ padding:12px 0; border-bottom:1px solid #e5efe7; font-weight:600 }
+  .mobile-nav a:last-child{ border-bottom:0 }
+  .mobile-nav.show{ max-height:300px }
+  @media (max-width:820px){
+    .navlinks{ display:none }
+    .hamburger{ display:block }
+  }
+
+  /* CONTENT */
+  .section{ max-width:1120px; margin:0 auto; padding:20px 16px }
+  .paper{ background:#fff; border:1px solid var(--ring); border-radius:16px; box-shadow:var(--shadow); padding:16px }
+  .btn{ padding:10px 16px; border-radius:999px; border:0; cursor:pointer; font-weight:700; box-shadow:var(--shadow) }
+  .btn-outline{ background:#fff; color:#0b6b56; border:2px solid #a6dac6 }
+  .btn-primary{ background:#0b6b56; color:#fff }
+  .stack{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between }
+
+/* ===== FOOTER (match bumi.html) ===== */
+.site-footer{
+  width:100%;
+  background: linear-gradient(180deg, var(--bg-bottom), #9ed7b1);
+  margin-top: 36px;
+  color: #0b3f33;
+  border-top:1px solid var(--ring);
+                /* jarak dari konten di atas */
+}
+.site-footer .wrap{
+  max-width:1120px;
+  margin:0 auto;
+  padding:24px 16px 28px;
+  text-align:center;
+}
+.site-footer .logo{
+  height:60px;
+  display:block;
+  margin:0 auto 8px;
+}
+.site-footer .brand{
+  font-weight:600;              /* tidak terlalu bold */
+  font-size:20px;
+  letter-spacing:.2px;
+}
+.site-footer p{
+  max-width:600px;
+  margin:8px auto 0;
+  color:var(--ink);
+}
+.site-footer .copy{
+  font-size:14px;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+/* responsif kecil */
+@media (max-width:480px){
+  .site-footer .wrap{ padding:16px 12px 22px; }
+  .site-footer .logo{ height:52px; }
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+
+    <button class="hamburger" id="navToggle" aria-label="Menu" aria-expanded="false">
+      <div></div><div></div><div></div>
+    </button>
+  </div>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="daily.html">Daily Lokal</a>
+    <a href="bumi.html">Bumi Words</a>
+    <a href="legenda.html">LegendaQu</a>
+    <a href="auth.html">Account</a>
+  </nav>
+
+</header>
+
+<section class="section">
+  <div class="paper">
+    <div class="stack">
+      <a class="btn btn-outline" href="legenda.html">← Back</a>
+      <div id="title" style="font-weight:800;font-size:20px"></div>
+      <div class="stack" style="gap:8px">
+        <button class="btn btn-outline" id="prevBtn">◀ Previous</button>
+        <button class="btn btn-primary" id="nextBtn">Next ▶</button>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <iframe id="yt" width="100%" height="420" src="" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <footer class="section" style="text-align:center;padding-top:0">
+  <img src="images/logo.png" alt="KATA logo" style="height:60px"><br>
+  <b style="font-size:20px">KATA</b>
+  <p style="max-width:600px;margin:8px auto 0">KATA is an interactive platform to preserve Indonesian regional languages ​​in a fun and modern way.</p>
+  <div style="font-size:14px;color:var(--muted);margin-top:6px">© 2025 KATA. All rights reserved.</div>
+</footer>
+
+</section>
+
+<script>
+  // NAVBAR mobile
+  const navToggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  function closeMobile(){ mobileNav.classList.remove('show'); navToggle.setAttribute('aria-expanded','false'); }
+  navToggle?.addEventListener('click', ()=>{
+    const open = !mobileNav.classList.contains('show');
+    mobileNav.classList.toggle('show', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+  });
+  mobileNav.addEventListener('click', e=>{ if(e.target.tagName==='A') closeMobile(); });
+  window.addEventListener('resize', ()=>{ if(window.innerWidth>820) closeMobile(); });
+  document.addEventListener('click', (e)=>{
+    if(window.innerWidth>820) return;
+    if(!mobileNav.contains(e.target) && !navToggle.contains(e.target)) closeMobile();
+  });
+
+  // Dataset video (sinkron dengan legenda.html)
+  const STORIES = [
+    { id:'malin',  title:'Malin Kundang',  youtube:'IQW64q5-lNE' },
+    { id:'sangkuriang', title:'Sangkuriang', youtube:'X6IrY6aHGXo' },
+    { id:'timun',  title:'Timun Mas',      youtube:'juEC_Q-j9Tw' },
+    { id:'roro',   title:'Roro Jonggrang', youtube:'N5VQYcmEBwk' },
+    { id:'tangkuban', title:'Keong Mas', youtube:'14xZV-jEnY0' }
+  ];
+
+  const params = new URLSearchParams(location.search);
+  let idx = Math.max(0, STORIES.findIndex(s=>s.id===params.get('id')));
+  if(idx===-1) idx = 0;
+
+  function render(){
+    const data = STORIES[idx];
+    document.getElementById('title').textContent = data.title;
+    document.getElementById('yt').src = `https://www.youtube.com/embed/${data.youtube}`;
+    history.replaceState(null,'',`?id=${encodeURIComponent(data.id)}`);
+  }
+  render();
+
+  document.getElementById('prevBtn').onclick=()=>{ idx=(idx-1+STORIES.length)%STORIES.length; render(); };
+  document.getElementById('nextBtn').onclick=()=>{ idx=(idx+1)%STORIES.length; render(); };
+</script>
+</body>
+</html>

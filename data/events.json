@@ -1,0 +1,100 @@
+{
+  "events": [
+    { "id": "nyepi", "name": "Nyepi (Tahun Baru Saka)", "province": "Bali", "month": 3, "recurrence": "yearly", "city": "Bali", "description": "Hari raya hening; tanggal spesifik berubah tiap tahun (umumnya Maret)." },
+
+    { "id": "galungan-1", "name": "Galungan & Kuningan (periode 1)", "province": "Bali", "month": 2, "recurrence": "yearly", "city": "Bali", "description": "Perayaan tiap 210 hari (kalender Pawukon); bulan berubah tiap tahun." },
+    { "id": "galungan-2", "name": "Galungan & Kuningan (periode 2)", "province": "Bali", "month": 9, "recurrence": "yearly", "city": "Bali", "description": "Perayaan kedua dalam satu tahun masehi (perkiraan)." },
+
+    { "id": "bau-nyale", "name": "Bau Nyale", "province": "Nusa Tenggara Barat", "month": 2, "month_end": 3, "recurrence": "yearly", "city": "Lombok Tengah", "description": "Tradisi menangkap cacing laut (nyale) di Pantai Selatan Lombok." },
+    { "id": "perang-topat", "name": "Perang Topat", "province": "Nusa Tenggara Barat", "month": 11, "month_end": 12, "recurrence": "yearly", "city": "Lombok Barat", "description": "Upacara syukur panen & kerukunan umat (Pura Lingsar)." },
+
+    { "id": "pasola", "name": "Pasola", "province": "Nusa Tenggara Timur", "month": 2, "month_end": 3, "recurrence": "yearly", "city": "Sumba", "description": "Perang-perangan berkuda sebagai bagian dari adat Marapu." },
+
+    { "id": "khanduri-laot", "name": "Khanduri Laot", "province": "Aceh", "month": 4, "recurrence": "yearly", "city": "Pesisir Aceh", "description": "Kenduri laut nelayan; doa keselamatan & rezeki." },
+
+    { "id": "tabot", "name": "Tabut/Tabot", "province": "Bengkulu", "month": 7, "month_end": 8, "recurrence": "yearly", "city": "Kota Bengkulu", "description": "Peringatan Asyura dengan prosesi arak tabut." },
+
+    { "id": "nganggung", "name": "Nganggung", "province": "Bangka Belitung", "month": 4, "month_end": 6, "recurrence": "yearly", "city": "Bangka Belitung", "description": "Tradisi makan bersama/‘beras saprah’ dalam berbagai hajatan adat & hari besar." },
+
+    { "id": "balimau-riau", "name": "Balimau Kasai", "province": "Riau", "month": 3, "month_end": 4, "recurrence": "yearly", "city": "Riau", "description": "Tradisi mandi membersihkan diri jelang Ramadan." },
+    { "id": "mandi-safar-bintan", "name": "Mandi Safar", "province": "Kepulauan Riau", "month": 10, "recurrence": "yearly", "city": "Bintan", "description": "Ritual tolak bala di Pantai Trikora & sekitarnya." },
+
+    { "id": "kenduri-sko", "name": "Kenduri Sko", "province": "Jambi", "month": 8, "recurrence": "yearly", "city": "Kerinci", "description": "Pengukuhan/pengesahan gelar adat; syukuran masyarakat Kerinci." },
+
+    { "id": "sedekah-sungai-musi", "name": "Sedekah Sungai Musi", "province": "Sumatera Selatan", "month": 8, "recurrence": "yearly", "city": "Palembang", "description": "Larung sesaji & syukur masyarakat tepian Sungai Musi." },
+
+    { "id": "pacu-jawi", "name": "Pacu Jawi", "province": "Sumatera Barat", "month": 8, "month_end": 10, "recurrence": "yearly", "city": "Tanah Datar", "description": "Balap sapi tradisional di sawah pasca panen." },
+    { "id": "tabuik", "name": "Festival Tabuik", "province": "Sumatera Barat", "month": 7, "month_end": 8, "recurrence": "yearly", "city": "Pariaman", "description": "Peringatan Asyura dengan prosesi Tabuik & helat rakyat." },
+
+    { "id": "gawai-dayak-naik-dango", "name": "Naik Dango (Gawai Dayak)", "province": "Kalimantan Barat", "month": 4, "month_end": 5, "recurrence": "yearly", "city": "Kalbar", "description": "Syukuran panen Dayak Kanayatn; puncak di Pontianak/Ngabang." },
+    { "id": "robo-robo", "name": "Robo-robo", "province": "Kalimantan Barat", "month": 10, "month_end": 11, "recurrence": "yearly", "city": "Mempawah", "description": "Tradisi tolak bala akhir bulan Safar di muara sungai." },
+
+    { "id": "mamapas-lewu", "name": "Mamapas Lewu", "province": "Kalimantan Tengah", "month": 3, "month_end": 4, "recurrence": "yearly", "city": "Kalteng", "description": "Ritual bersih kampung masyarakat Dayak Ngaju." },
+
+    { "id": "bubur-asyura-banjar", "name": "Bubur Asyura Banjar", "province": "Kalimantan Selatan", "month": 7, "month_end": 8, "recurrence": "yearly", "city": "Kalsel", "description": "Memasak bubur Asyura bersama untuk berbagi." },
+
+    { "id": "erau", "name": "Erau Adat Kutai", "province": "Kalimantan Timur", "month": 7, "month_end": 9, "recurrence": "yearly", "city": "Kutai Kartanegara", "description": "Upacara adat Kesultanan Kutai & hiburan rakyat di Tenggarong." },
+    { "id": "iraw-tengkayu", "name": "Iraw Tengkayu", "province": "Kalimantan Utara", "month": 10, "month_end": 11, "recurrence": "yearly", "city": "Tarakan", "description": "Pesta adat suku Tidung; pelarungan perahu." },
+
+    { "id": "pengucapan-minahasa", "name": "Pengucapan Syukur Minahasa", "province": "Sulawesi Utara", "month": 7, "month_end": 8, "recurrence": "yearly", "city": "Minahasa", "description": "Syukuran panen & jamuan terbuka di rumah-rumah." },
+
+    { "id": "tumbilotohe", "name": "Tumbilotohe", "province": "Gorontalo", "month": 4, "month_end": 6, "recurrence": "yearly", "city": "Gorontalo", "description": "Tradisi menyalakan lampu minyak jelang Idulfitri." },
+
+    { "id": "festival-danau-poso", "name": "Festival Danau Poso", "province": "Sulawesi Tengah", "month": 10, "recurrence": "yearly", "city": "Tentena", "description": "Pentas budaya & olahraga air Danau Poso." },
+
+    { "id": "sayyang-pattudu", "name": "Sayyang Pattu'du", "province": "Sulawesi Barat", "month": 11, "month_end": 12, "recurrence": "yearly", "city": "Polewali Mandar", "description": "Kuda menari pada peringatan Maulid Nabi." },
+
+    { "id": "kaghati-kolope", "name": "Kaghati Kolope", "province": "Sulawesi Tenggara", "month": 6, "recurrence": "yearly", "city": "Muna/Buton", "description": "Festival layang-layang tradisional dari daun kolope." },
+
+    { "id": "maudu-lompoa", "name": "Maudu’ Lompoa", "province": "Sulawesi Selatan", "month": 11, "month_end": 12, "recurrence": "yearly", "city": "Cikoang, Takalar", "description": "Peringatan Maulid Nabi dengan arak perahu dan telur hias." },
+    { "id": "maccera-tasi", "name": "Maccera’ Tasi", "province": "Sulawesi Selatan", "month": 4, "recurrence": "yearly", "city": "Pesisir Sulsel", "description": "Syukuran & penyucian laut masyarakat nelayan." },
+
+    { "id": "pukul-sapu", "name": "Baku Pukul Manyapu (Pukul Sapu)", "province": "Maluku", "month": 5, "month_end": 6, "recurrence": "yearly", "city": "Morella/Mamala", "description": "Tradisi adu pukul sapu lidi setelah Idulfitri." },
+
+    { "id": "teluk-jailolo", "name": "Festival Teluk Jailolo", "province": "Maluku Utara", "month": 5, "recurrence": "yearly", "city": "Jailolo", "description": "Pesta bahari & budaya Halmahera Barat." },
+    { "id": "kora-kora-ternate", "name": "Kora-kora & Kololi Kie", "province": "Maluku Utara", "month": 6, "recurrence": "yearly", "city": "Ternate/Tidore", "description": "Lomba perahu kora-kora & ritual mengitari gunung." },
+
+    { "id": "festival-sentani", "name": "Festival Danau Sentani", "province": "Papua", "month": 6, "recurrence": "yearly", "city": "Jayapura", "description": "Atraksi perahu & tarian khas pesisir Danau Sentani." },
+    { "id": "biak-munara-wampasi", "name": "Biak Munara Wampasi", "province": "Papua", "month": 2, "recurrence": "yearly", "city": "Biak Numfor", "description": "Ritual adat menangkap ikan & pesta rakyat." },
+
+    { "id": "lembah-baliem", "name": "Festival Lembah Baliem", "province": "Papua Pegunungan", "month": 8, "recurrence": "yearly", "city": "Wamena", "description": "Perang-perangan adat & pagelaran seni suku-suku pegunungan." },
+
+    { "id": "asmat", "name": "Festival Asmat", "province": "Papua Selatan", "month": 10, "recurrence": "yearly", "city": "Asmat", "description": "Pameran ukir Asmat, tari, & ritual sungai." },
+
+    { "id": "bakar-batu-papua-tengah", "name": "Pesta Bakar Batu", "province": "Papua Tengah", "month": 12, "recurrence": "yearly", "city": "Nabire & sekitarnya", "description": "Syukuran komunal dengan memasak batu panas." },
+
+    { "id": "suling-tambur", "name": "Festival Suling Tambur Raja Ampat", "province": "Papua Barat Daya", "month": 10, "recurrence": "yearly", "city": "Raja Ampat", "description": "Atraksi musik suling tambur & budaya Bahari." },
+
+    { "id": "sekaten", "name": "Sekaten", "province": "DI Yogyakarta", "month": 11, "recurrence": "yearly", "city": "Kota Yogyakarta", "description": "Peringatan Maulid Nabi; rangkaian gamelan & pasar malam." },
+    { "id": "grebeg-syawal", "name": "Grebeg Syawal", "province": "DI Yogyakarta", "month": 4, "month_end": 6, "recurrence": "yearly", "city": "Yogyakarta", "description": "Arak gunungan selepas Idulfitri." },
+
+    { "id": "dugderan", "name": "Dugderan", "province": "Jawa Tengah", "month": 3, "month_end": 4, "recurrence": "yearly", "city": "Semarang", "description": "Tradisi menyambut Ramadan; arak ‘Warak Ngendog’." },
+    { "id": "kirab-1-sura-solo", "name": "Kirab 1 Sura", "province": "Jawa Tengah", "month": 7, "month_end": 9, "recurrence": "yearly", "city": "Surakarta", "description": "Kirab pusaka malam 1 Sura (Tahun Baru Jawa)." },
+    { "id": "sedekah-bumi-jateng", "name": "Sedekah Bumi", "province": "Jawa Tengah", "month": 6, "month_end": 8, "recurrence": "yearly", "city": "Berbagai kabupaten", "description": "Syukuran panen & doa keselamatan desa." },
+
+    { "id": "grebeg-besar", "name": "Grebeg Besar", "province": "Jawa Tengah", "month": 6, "month_end": 7, "recurrence": "yearly", "city": "Demak", "description": "Ritual Iduladha di kompleks Masjid Agung Demak." },
+
+    { "id": "seren-taun-cigugur", "name": "Seren Taun Cigugur", "province": "Jawa Barat", "month": 8, "recurrence": "yearly", "city": "Kuningan", "description": "Puncak panen masyarakat adat Sunda Wiwitan." },
+    { "id": "mapag-sri", "name": "Mapag Sri", "province": "Jawa Barat", "month": 3, "month_end": 4, "recurrence": "yearly", "city": "Indramayu", "description": "Menyambut padi (Dewi Sri) sebelum panen." },
+
+    { "id": "debus-banten", "name": "Helaran Debus & Seren Taun", "province": "Banten", "month": 8, "recurrence": "yearly", "city": "Lebak/Banten Kidul", "description": "Seren Taun kasepuhan & atraksi debus." },
+
+    { "id": "lebaran-betawi", "name": "Lebaran Betawi", "province": "DKI Jakarta", "month": 7, "recurrence": "yearly", "city": "Jakarta", "description": "Pesta budaya Betawi pasca Idulfitri." },
+
+    { "id": "kasada", "name": "Yadnya Kasada", "province": "Jawa Timur", "month": 6, "month_end": 7, "recurrence": "yearly", "city": "Bromo (Tengger)", "description": "Persembahan sesaji ke kawah Gunung Bromo." },
+    { "id": "petik-laut-banyuwangi", "name": "Petik Laut Muncar", "province": "Jawa Timur", "month": 10, "recurrence": "yearly", "city": "Banyuwangi", "description": "Larung sesaji nelayan sebagai ungkapan syukur." },
+    { "id": "reog-ponorogo", "name": "Festival Reog Nasional", "province": "Jawa Timur", "month": 8, "recurrence": "yearly", "city": "Ponorogo", "description": "Parade reog & kirab pusaka." },
+
+    { "id": "seren-taun-bogor", "name": "Seren Taun Sindang Barang", "province": "Jawa Barat", "month": 9, "recurrence": "yearly", "city": "Bogor", "description": "Upacara adat panen & helaran kesenian Sunda." },
+
+    { "id": "ngareb-bumi-banten", "name": "Ngareb Bumi", "province": "Banten", "month": 6, "recurrence": "yearly", "city": "Pandeglang/Lebak", "description": "Syukuran hasil bumi & doa keselamatan." },
+
+    { "id": "festival-krakatau", "name": "Festival Krakatau", "province": "Lampung", "month": 8, "month_end": 9, "recurrence": "yearly", "city": "Bandar Lampung", "description": "Karnaval budaya & tur selat Sunda (ikon: Anak Krakatau)." },
+
+    { "id": "gandrung-sewu", "name": "Gandrung Sewu", "province": "Jawa Timur", "month": 10, "recurrence": "yearly", "city": "Banyuwangi", "description": "Tari massal Gandrung ribuan penari di Pantai Boom." },
+
+    { "id": "erongkorong", "name": "Rambu Solo’ (musim upacara)", "province": "Sulawesi Selatan", "month": 7, "month_end": 9, "recurrence": "yearly", "city": "Tana Toraja", "description": "Rangkaian upacara adat kematian Toraja (jadwal bervariasi)." },
+
+    { "id": "festival-borobudur-vesak", "name": "Perayaan Waisak Borobudur", "province": "Jawa Tengah", "month": 5, "recurrence": "yearly", "city": "Magelang", "description": "Prosesi dari Candi Mendut–Borobudur (adat-budaya Buddhis Nusantara)." }
+  ]
+}

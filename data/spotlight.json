@@ -1,0 +1,42 @@
+{
+  "words": [
+    { "w": "Sampurasun",   "m": "greetings (Sunda)",             "lang": "su", "prov": "Jawa Barat" },
+    { "w": "Rampés",       "m": "reply to Sampurasun (Sunda)",   "lang": "su", "prov": "Jawa Barat" },
+    { "w": "Hatur nuhun",  "m": "thank you (Sunda)",              "lang": "su", "prov": "Jawa Barat" },
+    { "w": "Wilujeng enjing","m": "good morning (Sunda)",         "lang": "su", "prov": "Jawa Barat" },
+
+    { "w": "Maturnuwun",   "m": "thank you (Javanese)",           "lang": "jv", "prov": "Jawa" },
+    { "w": "Monggo",       "m": "please; silakan (Javanese)",     "lang": "jv", "prov": "Jawa" },
+    { "w": "Nuwun sewu",   "m": "excuse me (Javanese)",           "lang": "jv", "prov": "Jawa" },
+    { "w": "Sugeng enjing","m": "good morning (Javanese)",        "lang": "jv", "prov": "Jawa" },
+    { "w": "Mangan",       "m": "to eat (Javanese)",              "lang": "jv", "prov": "Jawa" },
+
+    { "w": "Suksma",       "m": "thank you (Balinese)",           "lang": "ban","prov": "Bali" },
+    { "w": "Ampura",       "m": "sorry/excuse me (Balinese)",     "lang": "ban","prov": "Bali" },
+    { "w": "Om Swastyastu","m": "greetings (Balinese)",           "lang": "ban","prov": "Bali" },
+
+    { "w": "Horas",        "m": "greetings (Batak)",              "lang": "id", "prov": "Sumatera Utara" },
+    { "w": "Mauliate",     "m": "thank you (Batak)",              "lang": "id", "prov": "Sumatera Utara" },
+
+    { "w": "Ambo",         "m": "I / me (Minangkabau)",           "lang": "min","prov": "Sumatera Barat" },
+    { "w": "Uni",          "m": "older sister (Minangkabau)",     "lang": "min","prov": "Sumatera Barat" },
+    { "w": "Iyo",          "m": "yes (Minangkabau/Malay)",        "lang": "min","prov": "Sumatera Barat" },
+    { "w": "Ndak",         "m": "no/not (Minangkabau)",           "lang": "min","prov": "Sumatera Barat" },
+
+    { "w": "Ulun",         "m": "I / me (Banjar)",                "lang": "id", "prov": "Kalimantan Selatan" },
+    { "w": "Pian",         "m": "you (Banjar)",                   "lang": "id", "prov": "Kalimantan Selatan" },
+
+    { "w": "Tabe’",        "m": "excuse me (Bugis/Makassar)",     "lang": "id", "prov": "Sulawesi Selatan" },
+
+    { "w": "Torang",       "m": "we/us (Manado Malay)",           "lang": "id", "prov": "Sulawesi Utara" },
+
+    { "w": "Beta",         "m": "I / me (Ambon/Papua Malay)",     "lang": "id", "prov": "Maluku" },
+    { "w": "Ale",          "m": "you (Ambon/Papua Malay)",        "lang": "id", "prov": "Maluku" },
+
+    { "w": "Pace",         "m": "uncle (Papua Malay)",            "lang": "id", "prov": "Papua" },
+    { "w": "Mace",         "m": "aunt (Papua Malay)",             "lang": "id", "prov": "Papua" },
+
+    { "w": "Guyub",        "m": "in harmony/togetherness (Javanese)", "lang": "jv","prov": "Jawa" },
+    { "w": "Sumangga",     "m": "please; dipersilakan (Sunda)",   "lang": "su", "prov": "Jawa Barat" }
+  ]
+}

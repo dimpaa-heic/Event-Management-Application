@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KATA — Learn Local Languages</title>
+<style>
+:root {
+  --bg-top:#eaf9d5; --bg-bottom:#b8e3b5; --brand:#0b6b56; --brand-2:#16a085;
+  --ink:#133029; --muted:#5f6f66; --paper:#fff; --ring:#e7ede7;
+  --shadow:0 10px 28px rgba(17,43,33,.18);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Poppins',system-ui,Arial;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));color:var(--ink)}
+a{color:inherit;text-decoration:none}
+/* Navbar */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+/* HERO */
+.hero{max-width:1120px;margin:0 auto;padding:56px 16px 18px;text-align:center}
+.hero h1{margin:0 0 10px;font-size:42px;line-height:1.15;color:#073d32}
+.hero p{margin:0 auto 18px;color:var(--muted);max-width:720px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:13px 22px;font-weight:800;cursor:pointer;box-shadow:var(--shadow);transition:transform .15s ease,filter .18s ease,box-shadow .18s ease}
+.btn-primary{background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff}
+.btn-primary:hover{transform:translateY(-1px) scale(1.02);filter:brightness(1.02);box-shadow:0 14px 30px rgba(17,43,33,.22)}
+/* FEATURES */
+.features{max-width:1120px;margin:10px auto 24px;padding:0 16px}
+.feature-row{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.feature-row::-webkit-scrollbar{display:none}
+.card{scroll-snap-align:start;flex:0 0 300px;border-radius:22px;padding:20px;color:#fff;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px}
+.card.daily{background:linear-gradient(180deg,#EC848C,#e27b72)}
+.card.bumi{background:linear-gradient(180deg,#1C4094,#2e58a6)}
+.card.legenda{background:linear-gradient(180deg,#45997E,#3ba77d)}
+@media(min-width:1024px){.feature-row{overflow:visible;scroll-snap-type:none}.card{flex:1 1 calc((100% - 40px)/3);min-width:0}}
+/* SPOTLIGHT */
+.status-pill{ display:none !important; }
+.section{max-width:1120px;margin:0 auto;padding:18px 16px}
+.section h3{margin:0 0 10px}
+.spot-wrap{position:relative}
+.spot-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 44px}
+.spot-track::-webkit-scrollbar{display:none}
+.spot-card{scroll-snap-align:center;flex:0 0 280px;background:#f6faf7;border:1px solid var(--ring);border-radius:18px;box-shadow:var(--shadow);padding:16px;text-align:center;position:relative}
+.spot-word{font-weight:800;color:#cc5c66;margin-bottom:6px}
+.spot-meaning{color:#0b3f33;opacity:.9}
+.spot-audio{position:absolute;right:10px;top:10px;border:1px solid var(--ring);background:#fff;border-radius:999px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow)}
+.spot-nav{position:absolute;inset:0;pointer-events:none}
+.spot-btn{pointer-events:auto;position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;background:#fff;border:1px solid var(--ring);box-shadow:var(--shadow);display:grid;place-items:center;cursor:pointer}
+.spot-prev{left:0}.spot-next{right:0}
+.status-pill{font-size:12px;padding:2px 8px;border:1px solid #d0e6da;border-radius:999px;color:#2d5a4a;background:#eef7f1;margin-left:8px}
+.spot-prov{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;padding:4px 8px;border-radius:999px;background:#eef7f1;color:#2d5a4a;border:1px solid #d0e6da}
+/* EXPLORE */
+.explore-list{display:grid;gap:18px}
+.explore-card{background:#fff;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,0.08);padding:18px 20px;border-top:5px solid transparent;transition:transform .15s ease,box-shadow .2s ease}
+.explore-card:hover{transform:translateY(-3px);box-shadow:0 4px 10px rgba(0,0,0,0.12)}
+.explore-head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;margin-bottom:8px}
+.chip{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:8px;font-size:20px}
+.explore-card.daily{border-top-color:#e74c3c}.explore-card.daily .chip{background:#fdecea;color:#e74c3c}
+.explore-card.bumi{border-top-color:#27ae60}.explore-card.bumi .chip{background:#eafaf1;color:#27ae60}
+.explore-card.legenda{border-top-color:#2980b9}.explore-card.legenda .chip{background:#eaf3fb;color:#2980b9}
+.explore-desc{margin:6px 0 12px;color:#555;line-height:1.4}
+.cta{display:inline-flex;align-items:center;gap:6px;color:#555;font-weight:600}
+.cta:hover{color:#000}
+/* FOOTER */
+footer{background:linear-gradient(180deg,var(--bg-bottom),#9ed7b1);margin-top:36px;color:#0b3f33}
+footer .wrap{max-width:1120px;margin:0 auto;padding:20px;display:grid;gap:12px;text-align:center}
+footer img{height:60px;justify-self:center}
+
+/* ===== Chatbot floating widget ===== */
+#kata-chat-btn{position:fixed;right:18px;bottom:18px;border:0;border-radius:999px;padding:12px 16px;background:linear-gradient(90deg,#0b6b56,#16a085);color:#fff;font-weight:800;box-shadow:var(--shadow);cursor:pointer;z-index:9999}
+#kata-chat{position:fixed;right:18px;bottom:78px;width:320px;max-height:60vh;background:#fff;border:1px solid var(--ring);border-radius:14px;box-shadow:var(--shadow);display:none;flex-direction:column;overflow:hidden;z-index:9999}
+#kata-chat header{padding:10px 12px;font-weight:800;color:#073d32;border-bottom:1px solid #eef4ef;display:flex;justify-content:space-between;align-items:center}
+#kata-chat .body{padding:10px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.kmsg{border:1px solid #eef4ef;border-radius:12px;padding:8px 10px;max-width:85%}
+.kmsg.u{align-self:flex-end;background:#eaf9d5}
+.kmsg.b{align-self:flex-start;background:#f7fbf8}
+#kata-chat form{display:flex;gap:6px;padding:8px;border-top:1px solid #eef4ef}
+#kata-chat input{flex:1;border:1px solid var(--ring);border-radius:999px;padding:12px 14px; font-size:15px;}
+#kata-chat button.send{border:0;border-radius:999px;padding:10px 14px;background:#0b6b56;color:#fff;font-weight:700}
+:root{
+  --chat-w-desktop: 480px;   /* lebar default di desktop */
+  --chat-h-desktop: 76vh;    /* tinggi maks di desktop */
+}
+</style>
+</head>
+<body>
+<!-- NAV -->
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>From Words to Culture, From Culture to Us</h1>
+  <p>Interactive learning for Indonesia’s local languages.</p>
+  <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap">
+    <a class="btn btn-primary" href="daily.html">Start Today</a>
+    <a class="btn btn-primary" href="#features">Explore Features</a>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="feature-row">
+    <a href="daily.html" class="card daily"><h3>Daily Lokal</h3><div>Word, meaning, fun fact + audio</div></a>
+    <a href="bumi.html" class="card bumi"><h3>Bumi Words</h3><div>Indonesian Language Map</div></a>
+    <a href="legenda.html" class="card legenda"><h3>LegendaQu</h3><div>Folktales + Quiz</div></a>
+  </div>
+</section>
+
+<!-- SPOTLIGHT -->
+<section class="section">
+  <h3 style="display:flex;align-items:center">Spotlight <small id="spotStatus" class="status-pill">loading…</small></h3>
+  <div class="spot-wrap">
+    <div class="spot-track" id="spotTrack"></div>
+    <div class="spot-nav">
+      <button class="spot-btn spot-prev" id="spotPrev">‹</button>
+      <button class="spot-btn spot-next" id="spotNext">›</button>
+    </div>
+  </div>
+</section>
+
+<!-- EXPLORE -->
+<section class="section">
+  <h3>Three Ways to Explore</h3>
+  <p style="color:#666; margin-bottom:14px">Dive into local languages and culture interactively</p>
+  <div class="explore-list">
+    <div class="explore-card daily">
+      <div class="explore-head"><span class="chip">🔊</span><b>Daily Lokal</b></div>
+      <div class="explore-desc">Get a new local word every day with its meaning, pronunciation, and examples.</div>
+      <a class="cta" href="daily.html">Try Daily Lokal →</a>
+    </div>
+    <div class="explore-card bumi">
+      <div class="explore-head"><span class="chip">🗺️</span><b>Bumi Words</b></div>
+      <div class="explore-desc">Explore an interactive map to discover regional languages and cultural stories.</div>
+      <a class="cta" href="bumi.html">Try Bumi Words →</a>
+    </div>
+    <div class="explore-card legenda">
+      <div class="explore-head"><span class="chip">📖</span><b>LegendaQu</b></div>
+      <div class="explore-desc">Enjoy interactive folk stories and legends, then test your understanding.</div>
+      <a class="cta" href="legenda.html">Try LegendaQu →</a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <img src="images/logo.png" alt="KATA logo">
+    <h2>KATA</h2>
+    <p>KATA is an interactive platform to preserve Indonesian regional languages ​​in a fun and modern way.</p>
+    <div style="font-size:14px; color:#406454">© 2025 KATA. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- === Chatbot button + panel === -->
+<button id="kata-chat-btn">Tanya KATA</button>
+<div id="kata-chat" aria-live="polite">
+  <header>
+    <span>🤖 KATA Chat</span>
+    <button id="kata-chat-close" style="border:0;background:transparent;font-size:18px;cursor:pointer">✕</button>
+  </header>
+  <div class="body" id="kata-chat-body"></div>
+  <form id="kata-chat-form">
+    <input id="kata-chat-input" placeholder="Tanya kata daerah, bikin kuis, dst..." />
+    <button class="send" type="submit">Kirim</button>
+  </form>
+</div>
+
+<script>
+// ===== Spotlight config (dev no-cache) =====
+const API_URL = new URL('data/spotlight.json', location.href).href;
+const DEV = /127\.0\.0\.1|localhost/.test(location.hostname);
+const CACHE_KEY = 'kata_spotlight_cache_v3';
+const CACHE_TTL_MS = DEV ? 0 : 12 * 60 * 60 * 1000;
+if (DEV) ['kata_spotlight_cache_v1','kata_spotlight_cache_v2'].forEach(k=>localStorage.removeItem(k));
+
+/* ====== FALLBACK ====== */
+const FALLBACK_WORDS = [
+  {w:"Guyub",  m:"living in harmony; full of togetherness", prov:"Jawa",           lang:"jv"},
+  {w:"Heng",   m:"to follow / allow (Medan slang)",         prov:"Sumatera Utara", lang:"id"},
+  {w:"Sumangga",m:"please; dipersilakan",                    prov:"Jawa Barat",     lang:"su"},
+  {w:"Suksma", m:"thank you",                                prov:"Bali",           lang:"ban"},
+  {w:"Mangan", m:"to eat",                                   prov:"Jawa Tengah",    lang:"jv"},
+  {w:"Ambo",   m:"I / me",                                   prov:"Sumatera Barat", lang:"min"}
+];
+
+/* ====== seeded shuffle harian ====== */
+function hashString(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=(h<<13)|(h>>>19);}return (h>>>0);}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};}
+function seededShuffle(arr,seedStr){const rng=mulberry32(hashString(seedStr));const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function todaySeed(){ return 'spotlight|' + new Date().toDateString(); }
+
+/* ===== LOAD WORDS ===== */
+async function loadWords(){
+  try{
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && (Date.now() - cached.time) < CACHE_TTL_MS && Array.isArray(cached.words)) {
+      console.log('[Spotlight] pakai CACHE', cached.words);
+      return cached.words;
+    }
+  }catch(e){ console.warn('[Spotlight] cache parse error', e); }
+
+  try{
+    const url = API_URL + (API_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
+    const res = await fetch(url, { mode:'cors', cache:'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data  = await res.json();
+    const words = Array.isArray(data?.words) ? data.words : [];
+    if (!words.length) throw new Error('Empty words array');
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), words }));
+    console.log('[Spotlight] pakai API', words);
+    return words;
+  }catch(err){
+    console.warn('[Spotlight] FALLBACK lokal', err);
+    return FALLBACK_WORDS;
+  }
+}
+
+/* ===== RENDER spotlight ===== */
+const track = document.getElementById('spotTrack');
+let currentOrdered = [], currentOffset = 0;
+
+function renderCards(){
+  track.innerHTML=''; const n=currentOrdered.length; if(!n) return;
+  const showCount=Math.min(4,n);
+  for(let k=0;k<showCount;k++){
+    const i=(currentOffset+k)%n; const {w,m,prov,audio,lang}=currentOrdered[i]||{};
+    const card=document.createElement('div'); card.className='spot-card';
+    card.innerHTML=`
+      <button class="spot-audio" title="Play audio" data-audio="${audio||''}" data-text="${w||''}" data-lang="${lang||'id'}">🔊</button>
+      <div class="spot-word">“${w||''}”</div>
+      <div class="spot-meaning">meaning: ${m||''}</div>
+      ${prov?`<div class="spot-prov">${prov}</div>`:''}
+    `;
+    track.appendChild(card);
+  }
+  track.querySelectorAll('.spot-audio').forEach(btn=>{
+    btn.onclick=()=>{
+      const url=btn.dataset.audio;
+      if(url){ new Audio(url).play().catch(()=>{}); }
+      else {
+        const u=new SpeechSynthesisUtterance(btn.dataset.text);
+        const map={jv:'jv-ID',su:'su-ID',ban:'id-ID',min:'id-ID',id:'id-ID'};
+        u.lang=map[btn.dataset.lang]||'id-ID'; speechSynthesis.speak(u);
+      }
+    };
+  });
+}
+document.getElementById('spotNext').onclick=()=>{ if(!currentOrdered.length) return; currentOffset=(currentOffset+1)%currentOrdered.length; renderCards(); };
+document.getElementById('spotPrev').onclick=()=>{ if(!currentOrdered.length) return; currentOffset=(currentOffset-1+currentOrdered.length)%currentOrdered.length; renderCards(); };
+
+(async function initSpotlight(){
+  const list = await loadWords();
+  const clean = list.filter(x=>x&&x.w&&x.m);
+  currentOrdered = seededShuffle(clean, todaySeed());
+  currentOffset = 0; renderCards();
+})();
+document.querySelector('#spotStatus').addEventListener('click',(e)=>{ if(e.altKey){localStorage.removeItem(CACHE_KEY);location.reload();} });
+
+/* NAV toggle */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const toggle=document.querySelector(".nav-toggle");
+  const links=document.querySelector(".navlinks");
+  let open=false;
+  toggle.addEventListener("click", ()=>{
+    open=!open; links.classList.toggle("show",open); toggle.textContent=open?"✕":"☰";
+  });
+});
+
+/* ===== Chatbot logic ===== */
+const WORKER_URL = 'https://kata-chat.nadirakp06.workers.dev'; // URL Worker kamu
+const chatBtn = document.getElementById('kata-chat-btn');
+const chatBox = document.getElementById('kata-chat');
+document.querySelector('#kata-chat header')
+  .addEventListener('dblclick', () => chatBox.classList.toggle('big'));
+const chatBody = document.getElementById('kata-chat-body');
+const chatForm = document.getElementById('kata-chat-form');
+const chatInput = document.getElementById('kata-chat-input');
+document.getElementById('kata-chat-close').onclick = ()=> chatBox.style.display='none';
+chatBtn.onclick = ()=> { chatBox.style.display = (chatBox.style.display==='flex'?'none':'flex'); chatBox.style.flexDirection='column'; chatInput.focus(); };
+
+const chatHistory = [];
+function pushMsg(txt, who){
+  const div=document.createElement('div'); div.className='kmsg '+(who==='u'?'u':'b'); div.textContent=txt;
+  chatBody.appendChild(div); chatBody.scrollTop=chatBody.scrollHeight;
+}
+pushMsg('Hai! Aku bisa jelasin kata daerah, bikin contoh kalimat, atau kuis 3 soal. Coba: "Apa arti sampurasun?"','b');
+
+chatForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const q = chatInput.value.trim(); if(!q) return;
+  chatInput.value=''; pushMsg(q,'u'); chatHistory.push({role:'user',content:q});
+  try{
+    const r = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ messages: chatHistory.slice(-6) })
+    });
+    const data = await r.json(); const text = data.text || 'Maaf, coba lagi ya.';
+    pushMsg(text,'b'); chatHistory.push({role:'model',content:text});
+  }catch(err){ pushMsg('Lagi gangguan jaringan 🙏','b'); }
+});
+</script>
+</body>
+</html>

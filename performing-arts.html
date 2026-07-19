@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KATA — Clothing & Performing Arts</title>
+  <style>
+    :root{
+      --bg-top:#eaf9d5; --bg-bottom:#b8e3b5;
+      --ink:#133029; --muted:#5f6f66;
+      --brand:#0b6b56; --brand-2:#16a085;
+      --ring:#e7ede7; --paper:#fff; --shadow:0 10px 28px rgba(17,43,33,.18);
+      --radius:18px; --header-h:66px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Poppins,system-ui,Arial;
+      background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
+      color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+
+    /* NAVBAR */
+    /* Navbar */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+
+    /* SECTION */
+    .section{max-width:1120px;margin:0 auto;padding:22px 16px}
+    h2{margin:4px 0 14px;color:#0b3f33}
+
+    /* FILTER BAR */
+    .filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+    .input{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--ring);
+      border-radius:999px;padding:10px 14px}
+    .input input{border:0;outline:0;min-width:220px}
+    .input select{border:0;outline:0;background:transparent}
+    .chip{font-size:12px;font-weight:700;color:#0b3f33;background:#eaf7ef;
+      border:1px solid var(--ring);border-radius:999px;padding:4px 8px}
+    .btn{border:0;border-radius:999px;padding:10px 16px;cursor:pointer;
+      font-weight:700;box-shadow:var(--shadow);background:#fff}
+    .btn:hover{background:#effaf5}
+    .btn-primary{background:var(--brand);color:#fff}
+    .btn-primary:hover{filter:brightness(1.05)}
+
+    /* GRID CARDS */
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--paper);border:1px solid var(--ring);border-radius:16px;
+      box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+    .pic{position:relative;aspect-ratio:16/9;background:#eaf7ef center/cover no-repeat}
+    .body{padding:12px 14px;display:grid;gap:6px}
+    .title{margin:0;color:#0b3f33}
+    .meta{color:var(--muted);font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .syn{font-size:14px}
+    .fun{font-size:13.5px;background:#f6faf7;border:1px solid #e8f0ea;border-radius:10px;padding:8px 10px}
+    .actions{display:flex;justify-content:flex-end;padding:10px 14px 14px}
+
+    /* MODAL */
+    .modal{position:fixed;inset:0;z-index:70;display:none}
+    .modal.show{display:block}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.25)}
+    .sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:min(760px,92vw);background:#fff;border:1px solid var(--ring);
+      border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+    .sheet-head{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--ring)}
+    .sheet-head .thumb img{width:68px;height:68px;object-fit:cover;border-radius:12px}
+    .sheet-body{padding:12px 14px}
+    .close{margin-left:auto;border:1px solid var(--ring);background:#fff;
+      border-radius:999px;width:34px;height:34px;cursor:pointer}
+  </style>
+</head>
+<body>
+<!-- NAV -->
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+</header>
+
+  <section class="section">
+    <h2>Clothing & Performing Arts</h2>
+    <!-- FILTERS -->
+    <div class="filterbar">
+      <div class="input"><span>🔎</span><input id="q" type="search" placeholder="Cari busana/tari/musik/teater…"></div>
+      <div class="input"><span>🌏</span>
+        <select id="prov">
+          <option value="">Semua provinsi</option>
+          <option value="aceh">Aceh</option>
+          <option value="sumatera-utara">Sumatera Utara</option>
+          <option value="sumatera-barat">Sumatera Barat</option>
+          <option value="riau">Riau</option>
+          <option value="jambi">Jambi</option>
+          <option value="sumatera-selatan">Sumatera Selatan</option>
+          <option value="lampung">Lampung</option>
+          <option value="banten">Banten</option>
+          <option value="dki-jakarta">DKI Jakarta</option>
+          <option value="jawa-barat">Jawa Barat</option>
+          <option value="jawa-tengah">Jawa Tengah</option>
+          <option value="diyogyakarta">DI Yogyakarta</option>
+          <option value="jawa-timur">Jawa Timur</option>
+          <option value="bali">Bali</option>
+          <option value="ntb">Nusa Tenggara Barat</option>
+          <option value="ntt">Nusa Tenggara Timur</option>
+          <option value="kalimantan-barat">Kalimantan Barat</option>
+          <option value="kalimantan-tengah">Kalimantan Tengah</option>
+          <option value="kalimantan-selatan">Kalimantan Selatan</option>
+          <option value="kalimantan-timur">Kalimantan Timur</option>
+          <option value="sulawesi-selatan">Sulawesi Selatan</option>
+          <option value="maluku">Maluku</option>
+          <option value="papua">Papua</option>
+        </select>
+      </div>
+      <div class="input"><span>🏷️</span>
+        <select id="ptype">
+          <option value="">All types</option>
+          <option value="clothing">Clothing</option>
+          <option value="dance">Dance</option>
+          <option value="music">Music</option>
+          <option value="theater">Theater</option>
+        </select>
+      </div>
+      <button id="reset" class="btn">Reset</button>
+    </div>
+
+    <!-- GRID -->
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="meta" style="display:none;margin-top:8px">Tidak ada hasil. Coba ganti kata kunci / filter.</div>
+  </section>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal">
+    <div class="backdrop" data-close></div>
+    <div class="sheet">
+      <div class="sheet-head">
+        <div class="thumb" id="mThumb"></div>
+        <div>
+          <h3 id="mTitle" style="margin:0"></h3>
+          <div id="mMeta" class="meta"></div>
+        </div>
+        <button class="close" data-close>✕</button>
+      </div>
+      <div class="sheet-body" id="mBody"></div>
+    </div>
+  </div>
+
+  <script>
+  // ===== DATA CONTOH PER PROVINSI =====
+  const ARTS = [
+  // ACEH
+  {id:'tari-saman',type:'dance',title:'Tari Saman',province:'aceh',region:'Aceh',
+    image:'images/arts/tari-saman.jpg',
+    synopsis:'Tari duduk dengan tepukan ritmis.',fun:'Disebut Tari Seribu Tangan.',
+    details:'Gerakan cepat, syair, dan kepemimpinan syekh menonjol.'},
+
+  // SUMATERA UTARA
+  {id:'ulos',type:'clothing',title:'Ulos',province:'sumatera-utara',region:'Sumatera Utara',
+    image:'images/arts/ulos.jpeg',
+    synopsis:'Kain tenun sakral khas Batak.',fun:'Dipakai dalam upacara adat.',
+    details:'Simbol kasih & doa, diberikan lewat prosesi mangulosi.'},
+
+  // SUMATERA BARAT
+  {id:'rendai',type:'theater',title:'Randai',province:'sumatera-barat',region:'Sumatera Barat',
+    image:'images/arts/randai.jpg',
+    synopsis:'Teater rakyat berbentuk lingkaran.',fun:'Menggabungkan musik, tari, silat.',
+    details:'Cerita diambil dari kaba (kisah rakyat Minangkabau).'},
+
+  // RIAU
+  {id:'zapins',type:'dance',title:'Zapin',province:'riau',region:'Riau',
+    image:'images/arts/zapin.jpeg',
+    synopsis:'Tarian dengan gerakan lincah.',fun:'Dipengaruhi budaya Arab.',
+    details:'Biasanya diiringi gambus dan marwas.'},
+
+  // KEPULAUAN RIAU
+  {id:'joget-dangkong',type:'dance',title:'Joget Dangkong',province:'kepulauan-riau',region:'Kepulauan Riau',
+    image:'images/traditions/joget-dakong.jpg',
+    synopsis:'Tari pergaulan riang berpasangan.',fun:'Irama dangkong yang enerjik.',
+    details:'Gerak sederhana, komunikatif; populer di acara rakyat.'},
+
+  // JAMBI
+  {id:'sekapur-sirih',type:'dance',title:'Tari Sekapur Sirih',province:'jambi',region:'Jambi',
+    image:'images/arts/sekapur-sirih.jpeg',
+    synopsis:'Tari penyambutan tamu kehormatan.',fun:'Membawa cerana berisi sirih.',
+    details:'Gerak lemah-gemulai dengan busana Melayu Jambi.'},
+
+  // SUMATERA SELATAN
+  {id:'gending-sriwijaya',type:'dance',title:'Gending Sriwijaya',province:'sumatera-selatan',region:'Palembang, Sumsel',
+    image:'images/arts/gending.jpg',
+    synopsis:'Tari istana yang anggun.',fun:'Sering dipadu kain songket.',
+    details:'Formasi simetris menggambarkan keagungan Sriwijaya.'},
+
+  // BANGKA BELITUNG
+  {id:'tenun-cual',type:'clothing',title:'Tenun Cual',province:'bangka-belitung',region:'Bangka Belitung',
+    image:'images/arts/cual.jpg',
+    synopsis:'Kain tenun eksklusif bermotif bahari.',fun:'Dulu busana bangsawan.',
+    details:'Motif tapak manggis, kembang, fauna laut; pengerjaan detail.'},
+
+  // BENGKULU
+  {id:'dol-bengkulu',type:'music',title:'Dol Bengkulu',province:'bengkulu',region:'Bengkulu',
+    image:'images/arts/dol-bengkulu.jpg',
+    synopsis:'Ansambel bedug raksasa.',fun:'Ikonik di Festival Tabot.',
+    details:'Pola pukul kolosal menciptakan suasana megah.'},
+
+  // LAMPUNG
+  {id:'tapis-lampung',type:'clothing',title:'Tapis Lampung',province:'lampung',region:'Lampung',
+    image:'images/arts/tapis-lampung.jpg',
+    synopsis:'Kain sulam benang emas.',fun:'Sering dipadu mahkota siger.',
+    details:'Motif kapal, flora; proses sulam yang telaten.'},
+
+  // BANTEN
+  {id:'rampak-bedug',type:'music',title:'Rampak Bedug',province:'banten',region:'Banten',
+    image:'images/arts/rampak-bedug.jpg',
+    synopsis:'Tabuh bedug serentak nan dramatis.',fun:'Sering tampil jelang Idulfitri.',
+    details:'Koreografi pukulan & formasi panggung kolosal.'},
+
+  // DKI JAKARTA
+  {id:'ondel-ondel',type:'theater',title:'Ondel-ondel',province:'dki-jakarta',region:'Betawi (Jakarta)',
+    image:'images/arts/ondel-ondel.jpg',
+    synopsis:'Boneka raksasa arak-arakan.',fun:'Ikon budaya Betawi.',
+    details:'Diiringi tanjidor/gambang kromong; warna kontras.'},
+
+  // JAWA BARAT
+  {id:'angklung',type:'music',title:'Angklung',province:'jawa-barat',region:'Jawa Barat',
+    image:'images/arts/angklung.jpeg',
+    synopsis:'Alat musik bambu bernada.',fun:'Warisan UNESCO 2010.',
+    details:'Dimainkan bersama, tiap angklung bernada satu.'},
+
+  // JAWA TENGAH
+  {id:'wayang-kulit',type:'theater',title:'Wayang Kulit',province:'jawa-tengah',region:'Jawa',
+    image:'images/arts/wayang.jpg',
+    synopsis:'Teater bayang diiringi gamelan.',fun:'Sarat petuah & humor.',
+    details:'Dalang memainkan kisah Ramayana & Mahabharata.'},
+
+  // DI YOGYAKARTA
+  {id:'sekaten-gamelan',type:'music',title:'Gamelan Sekaten',province:'diyogyakarta',region:'DI Yogyakarta',
+    image:'images/arts/sekaten.jpg',
+    synopsis:'Set gamelan khusus perayaan Maulid.',fun:'Tabuhan khidmat nan megah.',
+    details:'Ditabuh di keraton saat perayaan Sekaten.'},
+
+  // JAWA TIMUR
+  {id:'reog-ponorogo',type:'theater',title:'Reog Ponorogo',province:'jawa-timur',region:'Ponorogo, Jatim',
+    image:'images/arts/reog.jpeg',
+    synopsis:'Atraksi barongan singa (dadak merak).',fun:'Topeng bisa >30 kg!',
+    details:'Diperkuat penari jathil, bujang ganong, dan warok.'},
+
+  // BALI
+  {id:'kecak',type:'dance',title:'Tari Kecak',province:'bali',region:'Bali',
+    image:'images/arts/kecak.jpg',
+    synopsis:'Tari massal tanpa instrumen.',fun:'Hanya vokal “cak-cak”.',
+    details:'Episode Ramayana dibawakan ratusan penari.'},
+
+  // NUSA TENGGARA BARAT
+  {id:'gendang-beleq',type:'music',title:'Gendang Beleq',province:'ntb',region:'Lombok, NTB',
+    image:'images/traditions/gendang-beleq.jpg',
+    synopsis:'Ansambel gendang besar berjalan.',fun:'Enerjik di pawai & penyambutan.',
+    details:'Pukulan berbalas, kostum Sasak yang khas.'},
+
+  // NUSA TENGGARA TIMUR
+  {id:'sasando',type:'music',title:'Sasando',province:'ntt',region:'Rote, NTT',
+    image:'images/arts/sasando.jpeg',
+    synopsis:'Alat musik petik daun lontar.',fun:'Timber mirip harpa.',
+    details:'Resonator lontar memperkaya warna bunyi.'},
+
+  // KALIMANTAN BARAT
+  {id:'tenun-ikat-dayak-kalbar',type:'clothing',title:'Tenun Ikat Dayak',province:'kalimantan-barat',region:'Dayak, Kalbar',
+    image:'images/arts/tenun.jpg',
+    synopsis:'Kain ikat bermotif kosmologi Dayak.',fun:'Dipakai di upacara & tari.',
+    details:'Pewarna alam; motif identitas sub-suku.'},
+
+  // KALIMANTAN TENGAH
+  {id:'karungut',type:'music',title:'Karungut',province:'kalimantan-tengah',region:'Kalimantan Tengah',
+    image:'images/arts/karungut.jpg',
+    synopsis:'Tembang tutur berirama.',fun:'Berisi nasihat & kisah rakyat.',
+    details:'Dibawakan solo/berpasangan dengan pantun spontan.'},
+
+  // KALIMANTAN SELATAN
+  {id:'baksa-kembang',type:'dance',title:'Baksa Kembang',province:'kalimantan-selatan',region:'Banjar, Kalsel',
+    image:'images/arts/baksa-kembang.jpg',
+    synopsis:'Tari penyambutan lembut-anggun.',fun:'Mahkota bunga jadi ciri.',
+    details:'Gerak tangan halus simbol keramahan.'},
+
+  // KALIMANTAN TIMUR
+  {id:'sape',type:'music',title:'Sape\' (Sampe)',province:'kalimantan-timur',region:'Dayak, Kaltim',
+    image:'images/arts/sape.jpg',
+    synopsis:'Alat musik petik Dayak.',fun:'Melodi “datun julud” populer.',
+    details:'Bentuk menyerupai perahu; ukiran khas suku.'},
+
+  // KALIMANTAN UTARA
+  {id:'kancet-ledo',type:'dance',title:'Kancet Ledo (Enggang)',province:'kalimantan-utara',region:'Dayak Kenyah, Kaltara',
+    image:'images/arts/kancet-ledo.jpg',
+    synopsis:'Tari menirukan gerak enggang.',fun:'Properti bulu enggang & selendang.',
+    details:'Gerak anggun, langkah kecil, pola melingkar.'},
+
+  // SULAWESI UTARA
+  {id:'kabasaran',type:'dance',title:'Kabasaran',province:'sulawesi-utara',region:'Minahasa, Sulut',
+    image:'images/arts/kabasaran.jpg',
+    synopsis:'Tari perang Minahasa.',fun:'Tombak & pedang jadi properti.',
+    details:'Ritmis, penuh teriakan penyemangat.'},
+
+  // GORONTALO
+  {id:'dana-dana',type:'dance',title:'Dana-Dana',province:'gorontalo',region:'Gorontalo',
+    image:'images/arts/dana-dana.jpg',
+    synopsis:'Tari pergaulan ceria.',fun:'Diiringi gambus/kulintang.',
+    details:'Gerak ringan; mudah diikuti ramai-ramai.'},
+
+  // SULAWESI TENGAH
+  {id:'dero',type:'dance',title:'Tari Dero',province:'sulawesi-tengah',region:'Poso, Sulteng',
+    image:'images/arts/dero.jpg',
+    synopsis:'Tari lingkaran bergandengan.',fun:'Simbol persatuan.',
+    details:'Gerak maju–mundur & tepukan ritmis.'},
+
+  // SULAWESI BARAT
+  {id:'sayyang-pattudu',type:'dance',title:'Sayyang Pattudu',province:'sulawesi-barat',region:'Mandar, Sulbar',
+    image:'images/arts/sayyang-pattudu.jpg',
+    synopsis:'Atraksi “kuda menari”.',fun:'Rayakan khatam Al-Qur’an.',
+    details:'Iringan gandrang & syair lokal; kuda dihias.'},
+
+  // SULAWESI TENGGARA
+  {id:'lulo',type:'dance',title:'Tari Lulo',province:'sulawesi-tenggara',region:'Sulawesi Tenggara',
+    image:'images/arts/lulo.jpg',
+    synopsis:'Tari massal melingkar.',fun:'Ikon keakraban masyarakat.',
+    details:'Variasi tempo & formasi; mengajak penonton ikut.'},
+
+  // SULAWESI SELATAN
+  {id:'pakarena',type:'dance',title:'Tari Pakarena',province:'sulawesi-selatan',region:'Makassar/Gowa, Sulsel',
+    image:'images/arts/pakarena.jpg',
+    synopsis:'Tari perempuan berkipas.',fun:'Gerak halus & berputar perlahan.',
+    details:'Iringan gendang & suling menghadirkan suasana magis.'},
+
+  // MALUKU
+  {id:'cakalele',type:'dance',title:'Cakalele',province:'maluku',region:'Maluku',
+    image:'images/arts/cakalele.jpg',
+    synopsis:'Tari perang Maluku.',fun:'Parang & salawaku (tameng) khas.',
+    details:'Terompet & tifa mengiringi pekik penyemangat.'},
+
+  // MALUKU UTARA
+  {id:'soya-soya',type:'dance',title:'Soya-Soya',province:'maluku-utara',region:'Ternate/Tidore',
+    image:'images/arts/soya-soya.jpg',
+    synopsis:'Tari semangat juang Kesultanan.',fun:'Gerak tegas dengan pedang kayu.',
+    details:'Pola lantai rapat; kostum prajurit tradisional.'},
+
+  // PAPUA
+  {id:'tifa',type:'music',title:'Tifa',province:'papua',region:'Papua',
+    image:'images/arts/tifa.jpg',
+    synopsis:'Alat musik pukul tradisional.',fun:'Dipakai dalam upacara adat.',
+    details:'Gendang kayu berkulit; dimainkan berkelompok.'},
+
+  // PAPUA BARAT
+  {id:'tifa-arfak',type:'music',title:'Tifa Arfak',province:'papua-barat',region:'Arfak, Papua Barat',
+    image:'images/arts/tifa-arfak.jpg',
+    synopsis:'Gendang tabuh dengan ukiran Arfak.',fun:'Irama menghentak untuk tari.',
+    details:'Dipakai mengiringi tarian & nyanyian seremonial.'},
+
+  // PAPUA BARAT DAYA
+  {id:'yospan-raja-ampat',type:'dance',title:'Yospan (Raja Ampat)',province:'papua-barat-daya',region:'Raja Ampat',
+    image:'images/arts/yospan-raja-ampat.jpg',
+    synopsis:'Varian Yospan di pesisir.',fun:'Atraksi wisata bahari populer.',
+    details:'Kostum berhiaskan kerang & motif laut.'},
+
+  // PAPUA TENGAH
+  {id:'musyoh',type:'dance',title:'Tari Musyoh',province:'papua-tengah',region:'Papua Tengah',
+    image:'images/arts/musyoh.jpg',
+    synopsis:'Tari pembersihan/penyucian.',fun:'Ritme tifa & sorak komunal.',
+    details:'Gerak melompat & pola melingkar; dibawakan berkelompok.'},
+
+  // PAPUA PEGUNUNGAN
+  {id:'noken',type:'clothing',title:'Noken',province:'papua-pegunungan',region:'Pegunungan Papua',
+    image:'images/arts/noken.jpg',
+    synopsis:'Tas rajut serbaguna.',fun:'Warisan budaya takbenda UNESCO.',
+    details:'Anyaman serat kulit kayu; dipakai di kepala/bahu.'},
+
+  // PAPUA SELATAN
+  {id:'tari-tobe-asmat',type:'dance',title:'Tari Tobe (Asmat)',province:'papua-selatan',region:'Asmat',
+    image:'images/arts/tobe-asmat.jpg',
+    synopsis:'Tari komunitas Asmat menghentak.',fun:'Topeng & ukiran kayu kuat identitasnya.',
+    details:'Biasanya tampil di upacara adat & penyambutan tamu.'}
+];
+
+
+  const TYPE_LABEL={clothing:'Clothing',dance:'Dance',music:'Music',theater:'Theater'};
+
+  const grid=document.getElementById('grid');
+  const empty=document.getElementById('empty');
+  const q=document.getElementById('q');
+  const prov=document.getElementById('prov');
+  const ptype=document.getElementById('ptype');
+  const reset=document.getElementById('reset');
+
+  function render(){
+    const text=(q.value||'').toLowerCase().trim();
+    const pv=prov.value.trim();
+    const tp=ptype.value.trim();
+    const rows=ARTS.filter(x=>{
+      const hitText=!text||`${x.title} ${x.region} ${x.synopsis} ${x.fun} ${x.details}`.toLowerCase().includes(text);
+      const hitProv=!pv||x.province===pv;
+      const hitType=!tp||x.type===tp;
+      return hitText&&hitProv&&hitType;
+    });
+    grid.innerHTML='';
+    rows.forEach(x=>{
+      const card=document.createElement('article');card.className='card';
+      const pic=document.createElement('div');pic.className='pic';
+      if(x.image){pic.style.backgroundImage=`url('${x.image}')`;}
+      const body=document.createElement('div');body.className='body';
+      body.innerHTML=`
+        <h3 class="title">${x.title}</h3>
+        <div class="meta"><span>${x.region}</span><span class="chip">${TYPE_LABEL[x.type]}</span></div>
+        <div class="syn">${x.synopsis}</div>
+        <div class="fun"><b>Fun fact:</b> ${x.fun}</div>`;
+      const actions=document.createElement('div');actions.className='actions';
+      const btn=document.createElement('button');btn.className='btn btn-primary';
+      btn.textContent='View details';btn.onclick=()=>openModal(x);
+      actions.appendChild(btn);
+      card.appendChild(pic);card.appendChild(body);card.appendChild(actions);
+      grid.appendChild(card);
+    });
+    empty.style.display=rows.length?'none':'block';
+  }
+
+  q.addEventListener('input',render);
+  prov.addEventListener('change',render);
+  ptype.addEventListener('change',render);
+  reset.addEventListener('click',()=>{q.value='';prov.value='';ptype.value='';render();});
+
+  const modal=document.getElementById('modal');
+  const mThumb=document.getElementById('mThumb');
+  const mTitle=document.getElementById('mTitle');
+  const mMeta=document.getElementById('mMeta');
+  const mBody=document.getElementById('mBody');
+
+  function openModal(x){
+    mThumb.innerHTML = x.image ? `<img src="${x.image}" alt="${x.title}">` : '🎭';
+    mTitle.textContent=x.title;
+    mMeta.textContent=`${x.region} • ${TYPE_LABEL[x.type]}`;
+    mBody.innerHTML=`
+      <p>${x.synopsis}</p>
+      <div class="fun"><b>Fun fact:</b> ${x.fun}</div>
+      <hr style="border:none;border-top:1px solid var(--ring);margin:12px 0">
+      <p>${x.details}</p>`;
+    modal.classList.add('show');
+  }
+  function closeModal(){modal.classList.remove('show');}
+  modal.addEventListener('click',e=>{if(e.target.hasAttribute('data-close')||e.target.classList.contains('backdrop'))closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+  // First render → tampilkan semua
+  render();
+  </script>
+</body>
+</html>

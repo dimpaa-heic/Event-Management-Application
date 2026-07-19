@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KATA — Typical Foods</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-top:#eaf9d5;
+      --bg-bottom:#b8e3b5;
+      --brand:#0b6b56;
+      --brand-2:#16a085;
+      --ink:#133029;
+      --muted:#5f6f66;
+      --card:#ffffff;
+      --ring:#cfead1;
+      --shadow:0 10px 30px rgba(11,107,86,.15);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom)) fixed}
+
+    /* ===== HEADER / NAVBAR (sesuai spesifikasi) ===== */
+    header{
+      position:sticky;top:0;z-index:40;
+      background:rgba(255,255,255,.9);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid #e5efe7;
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;max-width:1120px;margin:0 auto}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-weight:800}
+    .logo img{height:40px}
+    .navlinks{display:flex;gap:16px}
+    .navlinks a{font-weight:600;position:relative;text-decoration:none;color:var(--ink);padding:8px 4px;border-radius:8px}
+    .navlinks a::after{
+      content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;
+      background:linear-gradient(90deg,var(--brand),var(--brand-2));
+      transform:scaleX(0);transform-origin:left;transition:.25s
+    }
+    .navlinks a:hover::after{transform:scaleX(1)}
+    .navlinks a.active{color:var(--brand)}
+    .nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+
+    /* MOBILE DROPDOWN */
+    @media (max-width:768px){
+      .nav-toggle{display:block}
+      .navlinks{
+        position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;
+        border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;
+        transition:max-height .35s ease, opacity .35s ease;padding:0 14px
+      }
+      .navlinks.show{display:flex;max-height:400px;opacity:1;padding:10px 14px}
+    }
+
+    /* PAGE HEADER */
+    .hero{max-width:1120px;margin:18px auto 0;padding:0 20px 10px}
+    .title{font-size:26px;font-weight:800;margin:6px 0 2px}
+    .subtitle{color:var(--muted);margin:0 0 12px}
+    @media(min-width:640px){.title{font-size:30px}}
+
+    /* FILTERS */
+    .filters{display:grid;grid-template-columns:1fr;gap:10px;max-width:1120px;margin:0 auto 8px;padding:0 20px}
+    .filters .row{display:grid;grid-template-columns:1fr;gap:10px}
+    .input,.select{width:100%;padding:12px 14px;border:1px solid var(--ring);border-radius:14px;background:#fff;font-size:14px;outline:none}
+    .select{appearance:none;background-image:url('data:image/svg+xml;utf8,<svg fill="%23133029" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:18px}
+    @media(min-width:640px){.filters .row{grid-template-columns:1fr 320px}}
+
+    /* GRID & CARD */
+    .grid{max-width:1120px;margin:8px auto 30px;padding:0 20px;display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+    @media(min-width:1024px){.grid{grid-template-columns:1fr 1fr 1fr}}
+    .card{background:var(--card);border:1px solid #e7f4e6;border-radius:18px;box-shadow:0 6px 20px rgba(11,107,86,.06);overflow:hidden;display:flex;flex-direction:column}
+    .thumb{width:100%;aspect-ratio:16/10;background:#f2fff4;object-fit:cover}
+    .content{padding:12px 14px 8px;display:flex;flex-direction:column;gap:8px}
+    .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#0b6b56;background:#e8f7ef;border:1px solid #c8eadc;border-radius:999px;padding:6px 10px;width:max-content}
+    .title-food{font-weight:700;font-size:16px;margin:2px 0}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;border:1px solid var(--ring);background:#fff;text-decoration:none;color:var(--brand);font-weight:600;font-size:13px}
+    .btn.primary{background:linear-gradient(180deg,#1bbf93,#0b6b56);color:#fff;border-color:#0b6b56}
+    details{border:1px dashed #d9eedc;border-radius:12px;padding:8px 10px;background:#fbfffc}
+    details summary{cursor:pointer;font-weight:700;color:var(--brand)}
+    .recipe{font-size:13px;line-height:1.5;margin-top:6px}
+    .recipe ul{margin:6px 0 6px 20px;padding:0}
+
+    .empty{max-width:1120px;margin:16px auto;padding:0 20px;color:var(--muted)}
+
+    /* ===== FOOTER (sesuai spesifikasi) ===== */
+    footer{
+      background:linear-gradient(180deg,var(--bg-bottom),#9ed7b1);
+      margin-top:36px;color:#0b3f33
+    }
+    footer .wrap{
+      max-width:1120px;margin:0 auto;padding:20px;display:grid;gap:12px;text-align:center
+    }
+    footer img{height:60px;justify-self:center}
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="index.html">
+        <img src="images/logo.png" alt="KATA logo"><span>KATA</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" title="Toggle navigation">☰</button>
+
+      <div id="nav-links" class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="daily.html">Daily Lokal</a>
+        <a class="active" href="bumi.html" aria-current="page">Bumi Words</a>
+        <a href="legenda.html">LegendaQu</a>
+        <a href="auth.html">Account</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1 class="title">Typical Foods </h1>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <div class="row">
+      <input id="q" class="input" placeholder="Cari makanan atau provinsi… (mis. pempek / Sumatera Selatan)" />
+      <select id="prov" class="select">
+        <option value="">Pilih provinsi…</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <main id="grid" class="grid" aria-live="polite"></main>
+  <div id="empty" class="empty" hidden>Data tidak ditemukan. Coba ubah kata kunci atau pilih provinsi lain.</div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <img src="images/logo.png" alt="KATA logo">
+      <div style="font-size:20px;font-weight:700">KATA</div>
+      <p style="max-width:640px;margin:8px auto 0">
+        KATA adalah platform interaktif untuk melestarikan bahasa & budaya daerah Indonesia secara modern dan menyenangkan.
+      </p>
+      <div style="font-size:14px;color:#0b3f33">© 2025 KATA. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Toggle nav mobile =====
+    const toggleBtn = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    toggleBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      toggleBtn.setAttribute('aria-expanded', !expanded);
+    });
+    // Close menu when clicking a link (mobile)
+    navLinks.querySelectorAll('a').forEach(a=>{
+      a.addEventListener('click',()=>{ navLinks.classList.remove('show'); toggleBtn.setAttribute('aria-expanded','false'); });
+    });
+
+    // ====== DATA 38 PROVINSI (ringkas seperti versi sebelumnya) ======
+    const FOODS = [
+      {province:'Aceh', name:'Mie Aceh', img:'images/foods/mieaceh.jpg', youtube:'https://www.youtube.com/results?search_query=resep+mie+aceh', recipe:{ingredients:['250 g mie kuning tebal','150 g daging sapi/udang','3 siung bawang putih','6 siung bawang merah','2 sdm kari bubuk','cabai','tomat, kol, daun bawang','kecap, garam, gula, air kaldu'],steps:['Tumis bumbu halus + kari.','Masukkan daging/udang.','Tambahkan sayur & mie + kaldu.']}},
+      {province:'Sumatera Utara', name:'Bika Ambon', img:'images/foods/bika-ambon.jpg', youtube:'https://www.youtube.com/results?search_query=resep+bika+ambon', recipe:{ingredients:['250 g tapioka','100 g terigu','300 ml santan hangat','200 g gula','6 telur','ragi, daun jeruk, serai'],steps:['Santan berbumbu hangat.','Campur bahan, diamkan 1 jam.','Panggang hingga bersarang.']}},
+      {province:'Sumatera Barat', name:'Rendang', img:'images/foods/rendang.jpg', youtube:'https://www.youtube.com/results?search_query=resep+rendang+padang', recipe:{ingredients:['1 kg daging sapi','1.5 l santan','cabai, bawang, jahe, lengkuas, kunyit','serai, daun jeruk, daun kunyit, asam kandis'],steps:['Rebus santan + bumbu.','Masukkan daging, aduk sabar.','Masak sampai kering & berminyak.']}},
+      {province:'Riau', name:'Asam Pedas Patin', img:'images/foods/ikan-patin.jpg', youtube:'https://www.youtube.com/results?search_query=resep+asam+pedas+patin', recipe:{ingredients:['patin','serai, daun jeruk, asam','cabai, bawang, kunyit, jahe'],steps:['Tumis bumbu.','Tambahkan air & asam.','Masukkan patin hingga matang.']}},
+      {province:'Kepulauan Riau', name:'Lakse', img:'images/foods/lakse.jpg', youtube:'https://www.youtube.com/results?search_query=resep+lakse+kepri', recipe:{ingredients:['mie lakse','santan, ikan giling, bumbu kari'],steps:['Rebus mie.','Masak kuah kari + ikan.','Siram ke mie.']}},
+      {province:'Jambi', name:'Gulai Tempoyak Patin', img:'images/foods/tempoyak-patin.jpg', youtube:'https://www.youtube.com/results?search_query=resep+tempoyak+patin+jambi', recipe:{ingredients:['patin','tempoyak','cabai, kunyit, serai, daun kunyit'],steps:['Tumis bumbu + tempoyak.','Tambah air & aromatik.','Masak patin hingga harum.']}},
+      {province:'Sumatera Selatan', name:'Pempek', img:'images/foods/pempek3.jpg', youtube:'https://www.youtube.com/results?search_query=resep+pempek+palembang', recipe:{ingredients:['ikan giling','tapioka','air es, bawang putih, garam','cuko: gula merah, asam, bawang putih, cabai'],steps:['Aduk adonan, bentuk, rebus lalu goreng.','Sajikan dengan cuko.']}},
+      {province:'Kep. Bangka Belitung', name:'Lempah Kuning', img:'images/foods/lempah-kuning.jpg', youtube:'https://www.youtube.com/results?search_query=resep+lempah+kuning', recipe:{ingredients:['ikan','nanas','bumbu halus kunyit-cabai-terasi'],steps:['Rebus bumbu.','Masukkan ikan & nanas.']}},
+      {province:'Bengkulu', name:'Pendap', img:'images/foods/pendap.jpg', youtube:'https://www.youtube.com/results?search_query=resep+pendap+bengkulu', recipe:{ingredients:['ikan','kelapa parut, terasi, kunyit, cabai','daun talas/daun pisang'],steps:['Balur bumbu kelapa ke ikan.','Bungkus & kukus.']}},
+      {province:'Lampung', name:'Seruit', img:'images/foods/seruit.jpg', youtube:'https://www.youtube.com/results?search_query=resep+seruit+lampung', recipe:{ingredients:['ikan bakar','sambal terasi + buah kuini/ rimbang'],steps:['Bakar ikan.','Ulek sambal buah, sajikan.']}},
+      {province:'DKI Jakarta', name:'Kerak Telor', img:'images/foods/kerak-telor.jpg', youtube:'https://www.youtube.com/results?search_query=resep+kerak+telor', recipe:{ingredients:['ketan','telur','serundeng kelapa, ebi','bumbu kencur'],steps:['Masak ketan.','Masak telur + ketan + taburan.']}},
+      {province:'Banten', name:'Sate Bandeng', img:'images/foods/sate-bandeng.jpg', youtube:'https://www.youtube.com/results?search_query=resep+sate+bandeng', recipe:{ingredients:['bandeng tanpa duri','kelapa parut, santan, gula merah'],steps:['Campur daging + bumbu.','Masukkan ke kulit, jepit, bakar.']}},
+      {province:'Jawa Barat', name:'Karedok', img:'images/foods/karedok.jpg', youtube:'https://www.youtube.com/results?search_query=resep+karedok', recipe:{ingredients:['sayur mentah','bumbu kacang kencur'],steps:['Ulek bumbu kacang.','Campur sayuran.']}},
+      {province:'Jawa Tengah', name:'Lumpia Semarang', img:'images/foods/lumpia-semarang.jpg', youtube:'https://www.youtube.com/results?search_query=resep+lumpia+semarang', recipe:{ingredients:['kulit lumpia','isian rebung + udang/ayam'],steps:['Tumis isian.','Bungkus & goreng.']}},
+      {province:'DI Yogyakarta', name:'Gudeg', img:'images/foods/gudeg.jpg', youtube:'https://www.youtube.com/results?search_query=resep+gudeg+jogja', recipe:{ingredients:['nangka muda','santan, gula merah, salam, lengkuas'],steps:['Masak nangka lama hingga legit.']}},
+      {province:'Jawa Timur', name:'Rawon', img:'images/foods/rawon.jpg', youtube:'https://www.youtube.com/results?search_query=resep+rawon', recipe:{ingredients:['daging','kluwek','rempah rawon'],steps:['Tumis bumbu + kluwek.','Rebus daging hingga empuk.']}},
+      {province:'Bali', name:'Ayam Betutu', img:'images/foods/ayam-betutu.jpg', youtube:'https://www.youtube.com/results?search_query=resep+ayam+betutu', recipe:{ingredients:['ayam','bumbu genep Bali','daun pisang'],steps:['Lumuri bumbu.','Kukus/panggang lama.']}},
+      {province:'Nusa Tenggara Barat', name:'Ayam Taliwang', img:'images/foods/ayam-taliwang.jpg', youtube:'https://www.youtube.com/results?search_query=resep+ayam+taliwang', recipe:{ingredients:['ayam muda','bumbu cabai-terasi','jeruk limau'],steps:['Ungkep bumbu.','Bakar & oles bumbu.']}},
+      {province:'Nusa Tenggara Timur', name:'Se’i Sapi', img:'images/foods/sei-sapi.jpg', youtube:'https://www.youtube.com/results?search_query=resep+sei+sapi', recipe:{ingredients:['daging sapi asap','bawang, cabai','sambal lu’at'],steps:['Asap/pepalkan daging.','Iris & sajikan dengan sambal.']}},
+      {province:'Kalimantan Barat', name:'Choipan', img:'images/foods/choipan.jpg', youtube:'https://www.youtube.com/results?search_query=resep+choipan+pontianak', recipe:{ingredients:['kulit tapioka-terigu','isian bengkuang-kucai'],steps:['Buat kulit tipis.','Isi, kukus, sajikan.']}},
+      {province:'Kalimantan Tengah', name:'Juhu Singkah', img:'images/foods/juhu-singkah.jpg', youtube:'https://www.youtube.com/results?search_query=resep+juhu+singkah', recipe:{ingredients:['rebung rotan','ikan/udang','serai, kunyit, lengkuas'],steps:['Rebus singkah.','Masak dengan bumbu & ikan.']}},
+      {province:'Kalimantan Selatan', name:'Soto Banjar', img:'images/foods/soto-banjar.jpg', youtube:'https://www.youtube.com/results?search_query=resep+soto+banjar', recipe:{ingredients:['ayam','rempah wangi','bihun, pelengkap'],steps:['Rebus ayam dengan rempah.','Campur bumbu, sajikan.']}},
+      {province:'Kalimantan Timur', name:'Sate Kepiting', img:'images/foods/sate-kepiting.jpg', youtube:'https://www.youtube.com/results?search_query=resep+sate+kepiting+balikpapan', recipe:{ingredients:['daging kepiting','bumbu manis pedas'],steps:['Tumis bumbu + daging.','Tusuk & bakar.']}},
+      {province:'Kalimantan Utara', name:'Nasi Subut', img:'images/foods/nasi-subut.jpg', youtube:'https://www.youtube.com/results?search_query=resep+nasi+subut', recipe:{ingredients:['beras + jagung','pandan, garam'],steps:['Masak seperti nasi uduk sederhana.']}},
+      {province:'Sulawesi Utara', name:'Tinutuan', img:'images/foods/tinutuan.jpg', youtube:'https://www.youtube.com/results?search_query=resep+tinutuan', recipe:{ingredients:['beras','labu, jagung, sayur hijau'],steps:['Masak jadi bubur.','Tambah sayur & kemangi.']}},
+      {province:'Gorontalo', name:'Binte Biluhuta', img:'images/foods/binte.jpg', youtube:'https://www.youtube.com/results?search_query=resep+binte+biluhuta', recipe:{ingredients:['jagung ','ikan/udang','kemangi, jeruk nipis'],steps:['Rebus jagung.','Campur ikan & bumbu segar.']}},
+      {province:'Sulawesi Tengah', name:'Kaledo', img:'images/foods/kaledo.jpg', youtube:'https://www.youtube.com/results?search_query=resep+kaledo', recipe:{ingredients:['tulang sumsum sapi','cabai, bawang, jeruk'],'steps':['Rebus lama hingga empuk.','Bumbui pedas asam.']}},
+      {province:'Sulawesi Barat', name:'Jepa', img:'images/foods/jepa.jpg', youtube:'https://www.youtube.com/results?search_query=resep+jepa+mandar', recipe:{ingredients:['sagu','kelapa parut','garam'],steps:['Campur, pipihkan, panggang.']}},
+      {province:'Sulawesi Selatan', name:'Coto Makassar', img:'images/foods/coto.jpg', youtube:'https://www.youtube.com/results?search_query=resep+coto+makassar', recipe:{ingredients:['daging & jeroan','rempah sangrai, kacang'],steps:['Rebus daging.','Tumis bumbu, campur ke kuah.']}},
+      {province:'Sulawesi Tenggara', name:'Sinonggi', img:'images/foods/sinonggi.jpeg', youtube:'https://www.youtube.com/results?search_query=resep+sinonggi', recipe:{ingredients:['sagu','kuah ikan kuning'],steps:['Seduh sagu hingga kental.','Sajikan dengan kuah ikan.']}},
+      {province:'Maluku', name:'Ikan Kuah Pala Banda', img:'images/foods/kuah-pala.jpg', youtube:'https://www.youtube.com/results?search_query=resep+ikan+kuah+pala+banda', recipe:{ingredients:['ikan','pala, kayu manis, cengkih'],steps:['Tumis bumbu + pala.','Masak ikan hingga matang.']}},
+      {province:'Maluku Utara', name:'Gohu Ikan', img:'images/foods/gohu-ikan.jpg', youtube:'https://www.youtube.com/results?search_query=resep+gohu+ikan', recipe:{ingredients:['ikan tuna segar','jeruk nipis','bawang, cabai, kemangi'],steps:['Marinasi ikan.','Sirami tumisan bumbu & minyak panas.']}},
+      {province:'Papua', name:'Papeda & Kuah Kuning', img:'images/foods/papeda.jpg', youtube:'https://www.youtube.com/results?search_query=resep+papeda+kuah+kuning', recipe:{ingredients:['sagu','kuah ikan kunyit'],steps:['Masak sagu kental.','Siram kuah kuning.']}},
+      {province:'Papua Barat', name:'Ikan Bakar Manokwari', img:'images/foods/ikan-manokwari.jpg', youtube:'https://www.youtube.com/results?search_query=resep+ikan+bakar+manokwari', recipe:{ingredients:['ikan','sambal mentah rawit-bawang'],steps:['Bakar ikan.','Sajikan dengan sambal mentah.']}},
+      {province:'Papua Tengah', name:'Bagea', img:'images/foods/bagea.jpg', youtube:'https://www.youtube.com/results?search_query=resep+bagea', recipe:{ingredients:['300 g tepung sagu', '120–150 g gula pasir (sesuai selera)', '2 butir telur', '50 g kacang kenari sangrai, cincang', '50 g margarin/mentega leleh', '1 sdt kayu manis bubuk (opsional)', '1/4 sdt cengkih bubuk (opsional)', '1/4 sdt garam'],steps:[ 'Kocok telur + gula sampai larut.', 'Masukkan margarin leleh, aduk rata.', 'Tambahkan tepung sagu, garam, kayu manis, cengkih, dan kacang kenari; aduk sampai jadi adonan padat yang bisa dipulung.', 'Bentuk bulat pipih kecil (±3–4 cm) atau cetak sesuai selera.', 'Panggang suhu rendah 140–150°C 20–30 menit sampai bagian luar kering (bagian dalam tetap agak chewy).', 'Dinginkan, simpan di toples agar renyah di luar.']}},
+      {province:'Papua Pegunungan', name:'Udang Selingkuh', img:'images/foods/udang-selingkuh.jpg', youtube:'https://www.youtube.com/results?search_query=resep+udang+selingkuh+wamena', recipe:{ingredients:['udang besar/crayfish','bawang, cabai, jeruk'],steps:['Rebus/panggang udang.','Tumis bumbu & campur.']}},
+      {province:'Papua Selatan', name:'Sagu Lempeng', img:'images/foods/sagu-lempeng.jpg', youtube:'https://www.youtube.com/results?search_query=resep+sagu+lempeng', recipe:{ingredients:['sagu','kelapa, gula merah'],steps:['Campur & panggang sampai padat.']}},
+      {province:'Papua Barat Daya', name:'Ikan Asar Sorong', img:'images/foods/ikan-asar.jpg', youtube:'https://www.youtube.com/results?search_query=resep+ikan+asar+sorong', recipe:{ingredients:['ikan asap','sambal rica/colo-colo'],steps:['Asap ikan.','Suwir & sajikan dengan sambal.']}},
+    ];
+
+    // ===== Render & Filter =====
+    const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    const grid = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+    const q = document.getElementById('q');
+    const prov = document.getElementById('prov');
+
+    // isi dropdown provinsi
+    [...new Set(FOODS.map(f=>f.province))].sort().forEach(p=>{
+      const opt=document.createElement('option');opt.value=p;opt.textContent=p;prov.appendChild(opt);
+    });
+
+    // Prefix yang akan dicoba otomatis untuk menangani file di root / subfolder
+  const IMG_PREFIXES = ["", "../", "../../"];
+
+  function attachSmartLoader(imgEl, rawPath) {
+    let i = 0;
+    const fallback = "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1200&auto=format&fit=crop";
+
+    function tryNext() {
+      if (i < IMG_PREFIXES.length) {
+        imgEl.src = IMG_PREFIXES[i] + rawPath;
+        i += 1;
+      } else {
+        imgEl.onerror = null;            // hentikan loop error
+        imgEl.src = fallback;            // fallback terakhir
+      }
+    }
+
+    imgEl.onerror = tryNext;
+    tryNext(); // mulai percobaan pertama
+  }
+
+  function render(list){
+    grid.innerHTML='';
+    if(!list.length){empty.hidden=false;return;}
+    empty.hidden=true;
+
+    list.forEach(item=>{
+      // path mentah dari data (cukup isi 'images/foods/xxx.jpg')
+      const rawImgPath = item.img || (`images/foods/${slug(item.name)}.jpg`);
+
+      const el=document.createElement('article');
+      el.className='card';
+      el.innerHTML=`
+        <img class="thumb" alt="${item.name}">
+        <div class="content">
+          <span class="badge">${item.province}</span>
+          <div class="title-food">${item.name}</div>
+          <div class="actions">
+            <a class="btn primary" href="${item.youtube}" target="_blank" rel="noopener">Tonton di YouTube</a>
+            <a class="btn" href="#!" onclick="this.closest('.content').querySelector('details').open = !this.closest('.content').querySelector('details').open; return false;">Lihat Resep</a>
+          </div>
+          <details>
+            <summary>Resep singkat</summary>
+            <div class="recipe">
+              <b>Bahan:</b>
+              <ul>${item.recipe.ingredients.map(x=>`<li>${x}</li>`).join('')}</ul>
+              <b>Cara:</b>
+              <ul>${item.recipe.steps.map(x=>`<li>${x}</li>`).join('')}</ul>
+            </div>
+          </details>
+        </div>`;
+      grid.appendChild(el);
+
+      // pasang smart loader ke img
+      const imgEl = el.querySelector('img.thumb');
+      attachSmartLoader(imgEl, rawImgPath);
+    });
+  }
+
+  function applyFilter(){
+    const text=q.value.trim().toLowerCase();
+    const pick=prov.value;
+    const res=FOODS.filter(f=>{
+      const hitText=!text||(f.name.toLowerCase().includes(text)||f.province.toLowerCase().includes(text));
+      const hitProv=!pick||f.province===pick;
+      return hitText && hitProv;
+    });
+    render(res);
+  }
+
+  // isi dropdown provinsi
+  [...new Set(FOODS.map(f=>f.province))].sort().forEach(p=>{
+    const opt=document.createElement('option');opt.value=p;opt.textContent=p;prov.appendChild(opt);
+  });
+
+  q.addEventListener('input',applyFilter);
+  prov.addEventListener('change',applyFilter);
+
+  render(FOODS);
+
+  // deep link ?prov=
+  const urlParams=new URLSearchParams(location.search);
+  const p=urlParams.get('prov'); if(p){prov.value=p;applyFilter();}
+</script>
+
+</body>
+</html>

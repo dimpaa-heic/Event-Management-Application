@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KATA — Bumi Words</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root{
+      --bg-top:#eaf9d5; --bg-bottom:#b8e3b5;
+      --brand:#0b6b56; --brand-2:#16a085;
+      --ink:#133029; --muted:#5f6f66; --paper:#fff; --ring:#e7ede7;
+      --shadow:0 10px 28px rgba(17,43,33,.18); --radius:18px;
+      --header-h:64px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth; scroll-padding-top:var(--header-h);}
+    body{margin:0;font-family:'Poppins',system-ui,Arial;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+
+    /* Navbar */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+
+    /* Mobile trigger */
+    .burger{display:none;margin-left:auto;background:transparent;border:0;padding:8px;cursor:pointer}
+    .burger .line{display:block;width:26px;height:2px;background:#133029;margin:6px 0;border-radius:2px}
+
+    /* Mobile dropdown full-width */
+    .mb-menu-wrap{
+      position:fixed;left:0;right:0;top:var(--header-h);
+      z-index:9998;transform:translateY(-12px);opacity:0;pointer-events:none;transition:.2s;
+    }
+    .mb-menu-wrap.show{transform:none;opacity:1;pointer-events:auto}
+    .mb-menu{
+      max-width:1120px;margin:0 auto;background:#fff;border:1px solid var(--ring);border-top:0;
+      border-radius:0 0 14px 14px;box-shadow:var(--shadow);overflow:hidden
+    }
+    .mb-menu a{display:block;padding:16px;border-top:1px solid #eef4ef;font-weight:600}
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:9997;opacity:0;pointer-events:none;transition:.2s}
+    .backdrop.show{opacity:1;pointer-events:auto}
+
+    /* ===== CONTENT ===== */
+    .section{max-width:1120px;margin:0 auto;padding:24px 16px}
+    .paper{background:var(--paper);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .section h2{margin:0 0 12px;color:#0b3f33}
+
+    .inputs{display:flex;gap:8px;flex-wrap:wrap}
+    .input{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--ring);border-radius:999px;padding:8px 12px}
+    select{border:0;outline:0;background:transparent}
+
+    /* Map */
+    #map{
+      position:relative; z-index:1;
+      height:360px;border-radius:18px;border:1px solid var(--ring);box-shadow:var(--shadow);margin-top:12px;
+      overflow:hidden;
+    }
+    .leaflet-top, .leaflet-bottom{z-index:10 !important;}
+
+    /* Features (4 kotak) */
+    .features{margin-top:18px}
+    .features h3{margin:10px 0;color:#0b3f33}
+    .grid4{display:grid;gap:12px;grid-template-columns:repeat(4,minmax(0,1fr))}
+    .feat{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;background:#fff;border:1px solid var(--ring);border-radius:14px;padding:12px;box-shadow:var(--shadow)}
+    .feat img{width:64px;height:64px;object-fit:contain}
+    .feat b{color:#0b3f33}
+    .feat small{color:var(--muted)}
+    .feat:hover{transform:translateY(-1px)}
+
+    .btn{padding:10px 16px;border-radius:999px;border:0;cursor:pointer;font-weight:700;box-shadow:var(--shadow);transition:.2s}
+    .btn-ghost{background:#fff;border:1px solid var(--ring)}
+
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.show{opacity:1;transform:none}
+
+    footer{background:linear-gradient(180deg,var(--bg-bottom),#9ed7b1);margin-top:40px;color:#0b3f33}
+    footer .wrap{max-width:1120px;margin:0 auto;padding:20px;display:grid;gap:16px;text-align:center}
+    footer img{height:60px;justify-self:center}
+    footer p{max-width:600px;margin:0 auto}
+
+    /* Responsive */
+    @media (max-width: 960px){ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media (max-width: 840px){
+      .navlinks{display:none}
+      .burger{display:block}
+      .grid4{grid-template-columns:1fr}
+    }
+
+    /* ===== Kalender Adat ===== */
+    #adat-calendar .cal-toolbar{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      background:#fff;border:1px solid var(--ring);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);
+    }
+    #adat-calendar .cal-left{display:flex;align-items:center;gap:8px}
+    #adat-calendar .cal-select{
+      padding:8px 10px;border:1px solid var(--ring);border-radius:10px;background:#f9fffb
+    }
+    #adat-calendar .cal-right{display:flex;align-items:center;gap:10px}
+    #adat-calendar .cal-btn{
+      width:36px;height:36px;border-radius:999px;border:1px solid var(--ring);background:#fff;cursor:pointer;box-shadow:var(--shadow)
+    }
+    #adat-calendar .cal-label-strong{min-width:180px;text-align:center;color:#073d32}
+    #adat-calendar .cal-list{display:grid;gap:12px;margin-top:14px}
+    #adat-calendar .event-card{
+      background:#f6faf7;border:1px solid var(--ring);border-left:6px solid var(--brand);
+      border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);display:grid;gap:6px
+    }
+    #adat-calendar .event-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    #adat-calendar .event-title{font-weight:800;color:#0b3f33}
+    #adat-calendar .event-meta{font-size:12px;color:#406454;display:flex;gap:8px;flex-wrap:wrap}
+    #adat-calendar .tag{background:#eef7f1;border:1px solid var(--ring);border-radius:999px;padding:3px 8px;font-weight:600}
+    #adat-calendar .event-desc{color:#3a4a44}
+    #adat-calendar .event-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+    #adat-calendar .btn-lite{
+      display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--ring);
+      border-radius:10px;background:#fff;cursor:pointer
+    }
+    #adat-calendar .empty{
+      text-align:center;color:#5f6f66;background:#fff;border:1px dashed var(--ring);
+      border-radius:12px;padding:18px
+    }
+  </style>
+</head>
+<body>
+<!-- NAV -->
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+
+      <button class="burger" id="mbTrigger" aria-label="Open Menu">
+        <span class="line"></span><span class="line"></span><span class="line"></span>
+      </button>
+    </div>
+
+    <div id="mbWrap" class="mb-menu-wrap" aria-hidden="true">
+      <nav class="mb-menu">
+        <a href="index.html">Home</a>
+        <a href="daily.html">Daily Lokal</a>
+        <a href="bumi.html">Bumi Words</a>
+        <a href="legenda.html">LegendaQu</a>
+        <a href="auth.html">Account</a>
+      </nav>
+    </div>
+  </header>
+  <div id="backdrop" class="backdrop"></div>
+
+  <!-- BUMI WORDS -->
+  <section class="section reveal" id="section-bumi">
+    <h2>Bumi of Words</h2>
+
+    <div id="explore" class="paper">
+      <div class="inputs">
+        <div class="input"><span>🌏</span>
+          <select id="selectProv" aria-label="Pilih provinsi">
+            <option value="">Pilih provinsi</option>
+            <option value="aceh">Aceh</option>
+            <option value="sumatera-utara">Sumatera Utara</option>
+            <option value="sumatera-barat">Sumatera Barat</option>
+            <option value="riau">Riau</option>
+            <option value="kepulauan-riau">Kepulauan Riau</option>
+            <option value="jambi">Jambi</option>
+            <option value="sumatera-selatan">Sumatera Selatan</option>
+            <option value="bangka-belitung">Bangka Belitung</option>
+            <option value="bengkulu">Bengkulu</option>
+            <option value="lampung">Lampung</option>
+            <option value="banten">Banten</option>
+            <option value="dki-jakarta">DKI Jakarta</option>
+            <option value="jawa-barat">Jawa Barat</option>
+            <option value="jawa-tengah">Jawa Tengah</option>
+            <option value="diyogyakarta">DI Yogyakarta</option>
+            <option value="jawa-timur">Jawa Timur</option>
+            <option value="bali">Bali</option>
+            <option value="ntb">Nusa Tenggara Barat</option>
+            <option value="ntt">Nusa Tenggara Timur</option>
+            <option value="kalimantan-barat">Kalimantan Barat</option>
+            <option value="kalimantan-tengah">Kalimantan Tengah</option>
+            <option value="kalimantan-selatan">Kalimantan Selatan</option>
+            <option value="kalimantan-timur">Kalimantan Timur</option>
+            <option value="kalimantan-utara">Kalimantan Utara</option>
+            <option value="sulawesi-utara">Sulawesi Utara</option>
+            <option value="gorontalo">Gorontalo</option>
+            <option value="sulawesi-tengah">Sulawesi Tengah</option>
+            <option value="sulawesi-barat">Sulawesi Barat</option>
+            <option value="sulawesi-tenggara">Sulawesi Tenggara</option>
+            <option value="sulawesi-selatan">Sulawesi Selatan</option>
+            <option value="maluku">Maluku</option>
+            <option value="maluku-utara">Maluku Utara</option>
+            <option value="papua">Papua</option>
+            <option value="papua-barat">Papua Barat</option>
+            <option value="papua-barat-daya">Papua Barat Daya</option>
+            <option value="papua-tengah">Papua Tengah</option>
+            <option value="papua-pegunungan">Papua Pegunungan</option>
+            <option value="papua-selatan">Papua Selatan</option>
+          </select>
+        </div>
+      </div>
+      <div class="meta" style="margin-top:8px">Pilih provinsi untuk melihat kosakata!</div>
+      <div id="map"></div>
+
+      <!-- Explore More -->
+      <div style="display:flex;justify-content:center;margin-top:12px">
+        <a class="btn btn-ghost" id="btnExploreMore" href="words.html">Explore More</a>
+      </div>
+    </div> </br>
+
+    <!-- ===== KALENDER HARI BESAR ADAT (di bawah peta) ===== -->
+      <br><h2 style="margin:4px 0 10px;color:#0b3f33">Kalender Budaya Indonesia</h2> 
+    <div class="paper reveal" id="adat-calendar" style="margin-top:14px">
+      
+      <div class="cal-toolbar">
+        <div class="cal-left">
+          <label for="calProv" class="cal-label">Provinsi</label>
+          <select id="calProv" class="cal-select">
+            <option value="all">Semua Provinsi</option>
+          </select>
+        </div>
+
+        <div class="cal-right">
+          <button class="cal-btn" id="calPrev" aria-label="Previous month">‹</button>
+          <b id="calLabel" class="cal-label-strong">–</b>
+          <button class="cal-btn" id="calNext" aria-label="Next month">›</button>
+        </div>
+      </div>
+
+      <div id="calList" class="cal-list"></div>
+    </div> </br>
+
+    <!-- fitur 4 kotak -->
+    <div class="features reveal">
+      <h2>Category</h2>
+      <div class="grid4">
+        <a class="feat" href="traditions.html">
+          <img src="ondel.jpg" alt="Traditional Traditions">
+          <div>
+            <b>Tradisi Tradisional</b>
+            <small>perayaan, acara daerah, dll.</small>
+          </div>
+        </a>
+        <a class="feat" href="performing-arts.html">
+          <img src="bali.jpg" alt="Clothing & Performing Arts">
+          <div>
+            <b>Clothing & Performing Arts</b>
+            <small>pakaian, tari, musik, teater rakyat</small>
+          </div>
+        </a>
+        <a class="feat" href="food.html">
+          <img src="pempek.jpg" alt="Makanan Khas Daerah">
+          <div>
+            <b>Makanan Khas Daerah</b>
+            <small>masakan daerah tradisional</small>
+          </div>
+        </a>
+        <a class="feat" href="traditional-stories.html">
+          <img src="wayang.jpg" alt="Cerita Rakyat & Gim Tradisional">
+          <div>
+            <b>Cerita Rakyat & Gim Tradisional</b>
+            <small>dongeng, legenda, permainan tradisional</small>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="reveal">
+    <div class="wrap">
+      <img src="images/logo.png" alt="KATA logo">
+      <h2>KATA</h2>
+      <p>KATA is an interactive platform to preserve Indonesian regional languages ​​in a fun and modern way.</p>
+      <div style="font-size:14px;color:var(--muted)">© 2025 KATA. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== reveal ===== */
+    const io=new IntersectionObserver((entries)=>entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}
+    }),{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    /* ===== mobile dropdown ===== */
+    const trigger=document.getElementById('mbTrigger');
+    const wrap=document.getElementById('mbWrap');
+    const bd=document.getElementById('backdrop');
+    const closeMenu=()=>{wrap.classList.remove('show');bd.classList.remove('show');document.body.style.overflow=''}
+    const toggleMenu=()=>{const open=!wrap.classList.contains('show');open?(wrap.classList.add('show'),bd.classList.add('show'),document.body.style.overflow='hidden'):closeMenu()}
+    trigger.addEventListener('click',toggleMenu);
+    bd.addEventListener('click',closeMenu);
+    window.addEventListener('scroll',()=>{ if(wrap.classList.contains('show')) closeMenu(); });
+
+    /* ===== Leaflet ===== */
+    const map=L.map('map',{zoomControl:true}).setView([-2.5,118],5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // koordinat 38 provinsi
+    const coords={
+      "aceh":[5.55,95.32],"sumatera-utara":[3.59,98.67],"sumatera-barat":[-0.95,100.35],
+      "riau":[0.51,101.45],"kepulauan-riau":[1.08,104.03],"jambi":[-1.61,103.61],
+      "sumatera-selatan":[-3.32,104.91],"bangka-belitung":[-2.13,106.12],"bengkulu":[-3.79,102.26],
+      "lampung":[-5.43,105.27],
+      "banten":[-6.12,106.15],"dki-jakarta":[-6.2,106.82],"jawa-barat":[-6.91,107.61],
+      "jawa-tengah":[-7.2,110.4],"diyogyakarta":[-7.8,110.37],"jawa-timur":[-7.25,112.75],
+      "bali":[-8.34,115.09],"ntb":[-8.65,117.5],"ntt":[-8.65,121.08],
+      "kalimantan-barat":[0.12,109.34],"kalimantan-tengah":[-2.21,113.91],
+      "kalimantan-selatan":[-3.32,114.59],"kalimantan-timur":[0.5,117.15],"kalimantan-utara":[3.3,117.6],
+      "sulawesi-utara":[1.49,124.84],"gorontalo":[0.54,123.06],"sulawesi-tengah":[-0.9,119.87],
+      "sulawesi-barat":[-2.68,118.9],"sulawesi-tenggara":[-3.99,122.52],"sulawesi-selatan":[-5.14,119.41],
+      "maluku":[-3.7,128.17],"maluku-utara":[0.79,127.36],
+      "papua":[-2.53,140.72],"papua-barat":[-0.87,134.08],"papua-barat-daya":[-1.37,131.27],
+      "papua-tengah":[-3.97,137.62],"papua-pegunungan":[-4.07,138.95],"papua-selatan":[-7.98,139.67]
+    };
+
+    // param provinsi untuk Explore More
+    let selectedProv='';
+    function setExploreHref(){
+      const btn=document.getElementById('btnExploreMore');
+      btn.href = 'words.html' + (selectedProv?`?prov=${encodeURIComponent(selectedProv)}`:'');
+    }
+    function focusProv(key){
+      if(!coords[key]) return;
+      selectedProv=key; setExploreHref();
+      map.setView(coords[key],7);
+      L.marker(coords[key]).addTo(map).bindPopup(key.replace(/-/g," ")).openPopup();
+    }
+    document.getElementById('selectProv').onchange=e=>focusProv(e.target.value);
+
+    /* ===== Kalender Hari Besar Adat (API + rule engine) ===== */
+const EVENTS_URL   = new URL('data/events.json', location.href).href; // bisa diganti endpoint online
+const EVENTS_CACHE = 'kata_events_cache_v2'; // bump key biar cache lama nggak kepakai
+const EVENTS_TTL   = 12 * 60 * 60 * 1000; // 12 jam
+const monthsID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+let view = (()=>{ const d=new Date(); return { y:d.getFullYear(), m:d.getMonth()+1 }; })();
+let allEvents = [];
+
+async function loadEvents(){
+  try{
+    const cache = JSON.parse(localStorage.getItem(EVENTS_CACHE) || 'null');
+    if (cache && Date.now()-cache.t < EVENTS_TTL) return cache.data;
+  }catch{}
+  try{
+    const res = await fetch(EVENTS_URL + `?t=${Date.now()}`, {mode:'cors', cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(!Array.isArray(data?.events)) throw new Error('Bad schema');
+    localStorage.setItem(EVENTS_CACHE, JSON.stringify({t:Date.now(), data:data.events}));
+    return data.events;
+  }catch(e){
+    console.warn('events fallback', e);
+    // fallback contoh agar tetap tampil
+    return [
+      {id:'nyepi', name:'Nyepi (Tahun Baru Saka)', province:'Bali', rule:{type:'month', month:3},
+       recurrence:'yearly', city:'Bali', description:'Tanggal berubah tiap tahun (umumnya Maret).'},
+      {id:'pasola', name:'Pasola', province:'Nusa Tenggara Timur', rule:{type:'range-month', start:2, end:3},
+       recurrence:'yearly', city:'Sumba', description:'Tradisi berkuda; Feb–Mar (penanggalan adat).'},
+      {id:'sekaten', name:'Sekaten', province:'DI Yogyakarta', rule:{type:'month', month:11},
+       recurrence:'yearly', city:'Yogyakarta', description:'Peringatan Maulid; Rabiul Awal (≈ Nov).'},
+      {id:'contoh-pasti', name:'Contoh Tanggal Pasti', province:'Jawa Tengah',
+       date:'2025-12-12', city:'Semarang', description:'Contoh event dengan tanggal pasti.'}
+    ];
+  }
+}
+
+function labelMonth(y,m){ return `${monthsID[m-1]} ${y}`; }
+
+/* ==== Rule engine (mendukung: date | rule | month/month_end) ==== */
+const WDAY = { SUN:0, MON:1, TUE:2, WED:3, THU:4, FRI:5, SAT:6 };
+
+function occursInMonth(ev, y, m){
+  // 1) tanggal pasti
+  if (ev.date){ const [yy,mm]=ev.date.split('-').map(Number); return yy===y && mm===m; }
+  // 2) aturan rule
+  if (ev.rule){
+    const r = ev.rule;
+    switch (r.type){
+      case 'month':        return r.month === m;
+      case 'range-month':  return m >= r.start && m <= r.end;
+      case 'nth-weekday':  return r.month === m && !!dateFromNthWeekday(y,m,WDAY[r.weekday], r.nth);
+      case 'last-weekday': return r.month === m && !!dateFromLastWeekday(y,m,WDAY[r.weekday]);
+    }
+  }
+  // 3) fallback skema lama (month / month_end)
+  if (ev.month_end != null) return m >= ev.month && m <= ev.month_end;
+  if (ev.month != null)     return m === ev.month;
+  return false;
+}
+
+function materializeDate(ev, y, m){
+  // hasilkan YYYY-MM-DD jika bisa dihitung (untuk ICS & label pasti)
+  if (ev.date) return ev.date;
+  const r = ev.rule || {};
+  switch (r.type){
+    case 'nth-weekday':  return fmtISO(dateFromNthWeekday(y,m,WDAY[r.weekday], r.nth));
+    case 'last-weekday': return fmtISO(dateFromLastWeekday(y,m,WDAY[r.weekday]));
+    default: return ''; // month / range-month → tanpa tanggal pasti
+  }
+}
+
+function dateFromNthWeekday(y,m,weekday,nth){
+  const first = new Date(y, m-1, 1);
+  const offset = (7 + weekday - first.getDay()) % 7;
+  const day = 1 + offset + (nth-1)*7;
+  const d = new Date(y, m-1, day);
+  return (d.getMonth()+1===m) ? d : null;
+}
+function dateFromLastWeekday(y,m,weekday){
+  const last = new Date(y, m, 0); // last day of month
+  const back = (7 + last.getDay() - weekday) % 7;
+  return new Date(y, m-1, last.getDate()-back);
+}
+function fmtISO(d){ if(!d) return ''; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function fmtDate(d){ if(!d) return null; const [y,mm,dd]=d.split('-').map(Number); return `${dd} ${monthsID[mm-1]} ${y}`; }
+
+/* ==== ICS ==== */
+function toICS(ev){
+  if(!ev.date){ return null; }
+  const dt = ev.date.replace(/-/g,'');
+  const uid = `${ev.id||('ev-'+dt)}@kata.local`;
+  return [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//KATA//Calendar//ID',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTAMP:${dt}T000000Z`,
+    `DTSTART;VALUE=DATE:${dt}`,
+    `DTEND;VALUE=DATE:${dt}`,
+    `SUMMARY:${ev.name}`,
+    `LOCATION:${(ev.city?ev.city+', ':'')+ev.province}`,
+    `DESCRIPTION:${(ev.description||'')}`.replace(/\n/g,'\\n'),
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+}
+function downloadICS(evWithDate){
+  const ics = toICS(evWithDate); if(!ics) return;
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${evWithDate.id||'event'}.ics`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
+}
+
+/* ==== UI helpers ==== */
+function buildProvinceOptions(events){
+  const sel = document.getElementById('calProv');
+  const set = new Set(events.map(e=>e.province).filter(Boolean));
+  [...set].sort().forEach(p=>{
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    sel.appendChild(o);
+  });
+}
+function sortKeyFor(ev, y, m){
+  const mat = materializeDate(ev, y, m);
+  if (mat) return mat;
+  if (ev.date) return ev.date;
+  const mm = (ev.rule?.month ?? ev.month ?? m);
+  return `${y}-${String(mm).padStart(2,'0')}-01`;
+}
+
+/* ==== Render ==== */
+function renderCalendar(){
+  document.getElementById('calLabel').textContent = labelMonth(view.y, view.m);
+  const prov = document.getElementById('calProv').value;
+
+  const list = allEvents
+    .filter(ev => (prov==='all' || ev.province===prov))
+    .filter(ev => occursInMonth(ev, view.y, view.m))
+    .sort((a,b)=> sortKeyFor(a,view.y,view.m).localeCompare(sortKeyFor(b,view.y,view.m)));
+
+  const wrap = document.getElementById('calList');
+  wrap.innerHTML = '';
+
+  if(!list.length){
+    wrap.innerHTML = `<div class="empty">Belum ada event adat untuk bulan ini. Coba ganti provinsi/bulan.</div>`;
+    return;
+  }
+
+  list.forEach(ev=>{
+    const mat = materializeDate(ev, view.y, view.m); // '' jika tidak bisa dihitung
+    const dateText = mat
+      ? fmtDate(mat)
+      : (ev.rule && ev.rule.type==='range-month'
+          ? `Perkiraan: ${monthsID[(ev.rule.start)-1]}–${monthsID[(ev.rule.end)-1]}`
+          : `Perkiraan: ${monthsID[(ev.rule?.month ?? ev.month ?? view.m)-1]}`);
+
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    card.innerHTML = `
+      <div class="event-top">
+        <div class="event-title">${ev.name}</div>
+        <div class="event-meta">
+          <span class="tag">📍 ${ev.city?ev.city+', ':''}${ev.province||''}</span>
+          <span class="tag">🗓️ ${dateText}</span>
+          ${ev.recurrence ? `<span class="tag">🔁 ${ev.recurrence}</span>` : ''}
+        </div>
+      </div>
+      ${ev.description ? `<div class="event-desc">${ev.description}</div>` : ''}
+      <div class="event-actions">
+        ${mat ? `<button class="btn-lite" data-act="ics">➕ Add to Calendar</button>` : ''}
+        ${Array.isArray(ev.links)&&ev.links.length ? `<a class="btn-lite" target="_blank" rel="noopener" href="${ev.links[0]}">🔗 Info</a>` : ''}
+      </div>
+    `;
+
+    // bind ICS jika ada tanggal materialized
+    card.querySelectorAll('[data-act="ics"]').forEach(btn=>{
+      btn.onclick = ()=>{
+        const date = materializeDate(ev, view.y, view.m);
+        if(!date) return;
+        downloadICS({ ...ev, date });
+      };
+    });
+
+    wrap.appendChild(card);
+  });
+}
+
+/* ==== Init ==== */
+(async function initCalendar(){
+  allEvents = await loadEvents();
+  buildProvinceOptions(allEvents);
+  renderCalendar();
+  document.getElementById('calPrev').onclick = ()=>{
+    view.m--; if(view.m<1){ view.m=12; view.y--; } renderCalendar();
+  };
+  document.getElementById('calNext').onclick = ()=>{
+    view.m++; if(view.m>12){ view.m=1; view.y++; } renderCalendar();
+  };
+  document.getElementById('calProv').onchange = renderCalendar;
+})();
+
+  </script>
+</body>
+</html>

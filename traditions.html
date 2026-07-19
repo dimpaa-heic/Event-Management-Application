@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KATA — Traditional Traditions (Multimedia)</title>
+<style>
+  :root{
+    --bg-top:#eaf9d5; --bg-bottom:#b8e3b5;
+    --ink:#133029; --muted:#5f6f66;
+    --brand:#0b6b56; --brand-2:#16a085;
+    --ring:#e7ede7; --paper:#fff; --shadow:0 10px 28px rgba(17,43,33,.18);
+    --radius:18px; --header-h:66px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Poppins,system-ui,Arial;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));color:var(--ink)}
+  a{color:inherit;text-decoration:none}
+
+/* Navbar */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+
+  /* SECTION */
+  .section{max-width:1120px;margin:0 auto;padding:22px 16px}
+  h2{margin:4px 0 14px;color:#0b3f33}
+
+  /* FILTER BAR */
+  .filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .input{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--ring);border-radius:999px;padding:10px 14px}
+  .input input{border:0;outline:0;min-width:220px}
+  .input select{border:0;outline:0;background:transparent}
+  .btn{border:0;border-radius:12px;padding:10px 16px;cursor:pointer;font-weight:700;box-shadow:var(--shadow);background:#fff;transition:transform .08s ease, filter .12s ease}
+
+  /* GRID CARDS */
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:1px solid var(--ring);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .pic{position:relative;aspect-ratio:16/9;background:#eaf7ef center/cover no-repeat}
+  .body{padding:12px 14px;display:grid;gap:6px}
+  .title{margin:0;color:#0b3f33}
+  .meta{color:var(--muted);font-size:13.5px}
+  .fun{font-size:13.5px;background:#f6faf7;border:1px solid #e8f0ea;border-radius:10px;padding:8px 10px}
+  .actions{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 14px 14px}
+  .chip{font-size:12px;background:#eaf7ef;border:1px solid var(--ring);color:#0b3f33;border-radius:999px;padding:4px 8px}
+
+  /* TOMBOL UTAMA KONTRAS */
+  .btn.btn-primary{
+    background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    color:#fff;
+    transition: transform .15s ease, filter .18s ease, box-shadow .18s ease;
+  }
+  .btn.btn-primary:hover{ filter:brightness(1.05); transform:translateY(-1px); box-shadow:0 10px 26px rgba(11,107,86,.2); }
+
+  /* MODAL (scrollable content, body locked) */
+  .modal{position:fixed;inset:0;z-index:70;display:none}
+  .modal.show{display:block}
+  .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+  .sheet{
+    position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    width:min(980px,94vw);max-height:90vh;background:#fff;border:1px solid var(--ring);
+    border-radius:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden
+  }
+  .sheet-head{display:flex;gap:12px;padding:12px;border-bottom:1px solid var(--ring);align-items:center}
+  .sheet-head img{width:52px;height:52px;border-radius:12px;object-fit:cover;border:1px solid #e8f0ea}
+  .sheet-body{padding:12px 14px;overflow:auto}
+  .sheet-body > *{max-width:100%}
+  .close{margin-left:auto;border:1px solid var(--ring);background:#fff;border-radius:999px;width:34px;height:34px;cursor:pointer}
+
+  /* Player YouTube responsif */
+  .video-wrap{position:relative;width:100%;padding-top:56.25%;border:1px solid var(--ring);border-radius:12px;overflow:hidden;background:#000}
+  .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .thumbs{display:flex;gap:8px;overflow:auto;padding-bottom:2px;margin-top:10px}
+  .thumbs img{height:66px;border-radius:8px;border:1px solid var(--ring);cursor:pointer;opacity:.8}
+  .thumbs img.active{outline:2px solid #18b095;opacity:1}
+  .muted{color:#6b7d73;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <h2>Traditional Traditions</h2>
+
+  <div class="filterbar">
+    <div class="input"><span>🔎</span><input id="q" type="search" placeholder="Cari tradisi…"></div>
+    <div class="input"><span>🌏</span>
+      <select id="prov">
+        <option value="">Semua provinsi</option>
+        <option value="aceh">Aceh</option>
+        <option value="sumatera-utara">Sumatera Utara</option>
+        <option value="sumatera-barat">Sumatera Barat</option>
+        <option value="riau">Riau</option>
+        <option value="kepulauan-riau">Kepulauan Riau</option>
+        <option value="jambi">Jambi</option>
+        <option value="sumatera-selatan">Sumatera Selatan</option>
+        <option value="bangka-belitung">Bangka Belitung</option>
+        <option value="bengkulu">Bengkulu</option>
+        <option value="lampung">Lampung</option>
+        <option value="banten">Banten</option>
+        <option value="dki-jakarta">DKI Jakarta</option>
+        <option value="jawa-barat">Jawa Barat</option>
+        <option value="jawa-tengah">Jawa Tengah</option>
+        <option value="diyogyakarta">DI Yogyakarta</option>
+        <option value="jawa-timur">Jawa Timur</option>
+        <option value="bali">Bali</option>
+        <option value="ntb">Nusa Tenggara Barat</option>
+        <option value="ntt">Nusa Tenggara Timur</option>
+        <option value="kalimantan-barat">Kalimantan Barat</option>
+        <option value="kalimantan-tengah">Kalimantan Tengah</option>
+        <option value="kalimantan-selatan">Kalimantan Selatan</option>
+        <option value="kalimantan-timur">Kalimantan Timur</option>
+        <option value="kalimantan-utara">Kalimantan Utara</option>
+        <option value="sulawesi-utara">Sulawesi Utara</option>
+        <option value="gorontalo">Gorontalo</option>
+        <option value="sulawesi-tengah">Sulawesi Tengah</option>
+        <option value="sulawesi-barat">Sulawesi Barat</option>
+        <option value="sulawesi-tenggara">Sulawesi Tenggara</option>
+        <option value="sulawesi-selatan">Sulawesi Selatan</option>
+        <option value="maluku">Maluku</option>
+        <option value="maluku-utara">Maluku Utara</option>
+        <option value="papua">Papua</option>
+        <option value="papua-barat">Papua Barat</option>
+        <option value="papua-barat-daya">Papua Barat Daya</option>
+        <option value="papua-tengah">Papua Tengah</option>
+        <option value="papua-pegunungan">Papua Pegunungan</option>
+        <option value="papua-selatan">Papua Selatan</option>
+      </select>
+    </div>
+    <button id="reset" class="btn">Reset</button>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="meta" style="display:none;margin-top:8px">Tidak ada hasil. Coba ganti kata kunci / provinsi.</div>
+</section>
+
+<!-- MODAL -->
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="backdrop" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-head">
+      <img id="mThumb" alt="" src="">
+      <div style="min-width:0">
+        <h3 id="mTitle" style="margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></h3>
+        <div id="mMeta" class="meta"></div>
+      </div>
+      <button class="close" title="Close" data-close>✕</button>
+    </div>
+    <div class="sheet-body" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+/* ====== DATA ======
+   Pakai yt:[ 'VIDEO_ID', ... ] untuk menentukan video.
+   Jika kosong, akan embed hasil pencarian YouTube (tanpa API key).
+*/
+const DATA = [
+  /* ACEH */
+  {id:'meugang-aceh', title:'Meugang', province:'aceh', region:'Aceh', image:'images/traditions/meugang.jpeg', info:'Tradisi menyembelih hewan dan makan bersama keluarga menjelang Ramadan/hari besar.', fun:'Diyakini menguatkan silaturahmi dan kepedulian sosial di gampong.', yt:['https://youtu.be/y7D_SYmr1xc?si=Msi8beXm9Qie3Qbo']},
+  {id:'peusijuek-aceh', title:'Peusijuek', province:'aceh', region:'Aceh', image:'images/traditions/peusijuek.jpeg', info:'Upacara tepung tawar untuk mendoakan keselamatan pada berbagai hajat.', fun:'Media utamanya beras padi, daun, dan air sebagai simbol doa.', yt:['https://youtu.be/w9vjaU1OkLE?si=Pj_iDlZggFn6XLBn']},
+  {id:'saman-aceh', title:'Tari Saman', province:'aceh', region:'Gayo, Aceh', image:'images/traditions/saman.jpg', info:'Tari duduk bertepuk ritmis yang dibawakan secara kompak.', fun:'Sering dijuluki “Seribu Tangan”.', yt:['https://youtu.be/B_AXmqqPER0?si=tWkOWm2_6C2MBSyP']},
+  {id:'seudati-aceh', title:'Tari Seudati', province:'aceh', region:'Aceh', image:'images/traditions/seudati.jpg', info:'Tari maskulin bernuansa dakwah dengan hentakan dinamis.', fun:'Gerakannya tegas dengan vokal syair khas.', yt:['https://youtu.be/B5oI-won_ZI?si=odrmSKwWQFHGyjRm']},
+  {id:'kenduri-laot-aceh', title:'Kenduri Laot', province:'aceh', region:'Pesisir Aceh', image:'images/traditions/kenduri.jpg', info:'Syukuran nelayan dan doa keselamatan laut.', fun:'Ada pantangan adat saat musim tertentu demi menjaga ekosistem.', yt:['https://youtu.be/NankAioK8qg?si=cImUj-Iz4BAuVibw']},
+
+  /* SUMATERA UTARA */
+  {id:'lompat-batu-nias', title:'Lompat Batu Nias', province:'sumatera-utara', region:'Nias, Sumut', image:'images/traditions/lompat-batu-nias.jpg', info:'Tradisi melompati tumpukan batu ±2 meter, simbol kedewasaan & keberanian.', fun:'Kini menjadi atraksi budaya ikonik Pulau Nias.', yt:['https://youtu.be/ge-yg6m2sf8?si=tJq00WDZJoZtiA4z']},
+  {id:'mangulosi-batak', title:'Mangulosi', province:'sumatera-utara', region:'Batak, Sumut', image:'images/traditions/mangulosi.jpg', info:'Pemberian ulos sebagai doa & restu pada upacara adat.', fun:'Jenis ulos berbeda untuk status/keperluan tertentu.', yt:['https://youtu.be/Jpm_886RqHU?si=vFX42CU2r9CD1n6X']},
+  {id:'tortor-batak', title:'Tortor', province:'sumatera-utara', region:'Batak, Sumut', image:'images/traditions/tortorjpg.jpg', info:'Tari adat dengan gerak simbolik diiringi gondang.', fun:'Gerak tangan menyampaikan makna penghormatan.', yt:['https://youtu.be/3M56D_SbNqY?si=UUTFBuzvSjMM11jP']},
+  {id:'mangokkal-holi', title:'Mangokkal Holi', province:'sumatera-utara', region:'Batak Toba', image:'images/traditions/mangokkal-holi.jpeg', info:'Ritual pengangkatan tulang leluhur ke tempat yang lebih terhormat.', fun:'Momentum mempererat marga & keturunan.', yt:['https://youtu.be/YLIKYgddZR8?si=3aPMp-9htcuxeCrE']},
+  {id:'horja-bius', title:'Horja Bius', province:'sumatera-utara', region:'Batak Toba', image:'images/traditions/horja-bius.jpeg', info:'Pesta adat besar sebagai syukur & musyawarah kampung.', fun:'Melibatkan gondang, tortor, dan prosesi adat lengkap.', yt:['https://youtu.be/a_SCcjIC-Tk?si=00pi15MNR8StH_1f']},
+
+  /* SUMATERA BARAT */
+  {id:'pacu-jawi', title:'Pacu Jawi', province:'sumatera-barat', region:'Tanah Datar, Sumbar', image:'images/traditions/pacu-jawi.jpg', info:'Balapan sapi di sawah berlumpur sebagai hiburan pascapanen.', fun:'Joki menggigit ekor agar lebih kencang—ciri khasnya.', yt:['https://youtu.be/pKj209V2T4w?si=L939Pc0yUCSldhmz']},
+  {id:'tabuik-pariaman', title:'Tabuik', province:'sumatera-barat', region:'Pariaman, Sumbar', image:'images/traditions/tabuik.jpg', info:'Arak-arakan menara Tabuik pada 10 Muharram menuju pantai.', fun:'Akulturasi tradisi lokal dengan peringatan Asyura.', yt:['https://youtu.be/Kzi7Ee0-EiM?si=Eh5bn7pz2UB2Lo99']},
+  {id:'batagak-penghulu', title:'Batagak Penghulu', province:'sumatera-barat', region:'Minangkabau', image:'images/traditions/batagak.jpg', info:'Pengukuhan kepala suku (penghulu) dalam adat Minang.', fun:'Disebut juga batagak gala (gelar).', yt:['https://youtu.be/ov6ahwBzPgg?si=Ip4jFT5a8ApabMU6']},
+  {id:'turun-mandi-minang', title:'Turun Mandi', province:'sumatera-barat', region:'Minangkabau', image:'images/traditions/turun-mandi.jpg', info:'Ritual menyambut kelahiran bayi dengan memandikan secara adat.', fun:'Dibarengi doa dan jamuan keluarga.', yt:['https://youtu.be/lUGs6pkrH3M?si=seWfzWEMICnMuYcL']},
+  {id:'malamang-minang', title:'Malamang', province:'sumatera-barat', region:'Minangkabau', image:'images/traditions/malamang.jpg', info:'Tradisi memasak lamang (beras ketan) dalam bambu untuk syukuran.', fun:'Sering dilakukan jelang hari besar.', yt:['https://youtu.be/x_dDWedHK4U?si=wrJ5x6o7W5lQypWE']},
+
+  /* RIAU */
+  {id:'balimau-kasai', title:'Balimau Kasai', province:'riau', region:'Riau', image:'images/traditions/balimau-kasai.png', info:'Mandi berlimau/berwangi jelang Ramadan sebagai simbol pensucian.', fun:'Dilakukan di sungai atau tempat khusus.', yt:['https://youtu.be/moqbvMh1c9E?si=xb36gSlqbUYhdI7t']},
+  {id:'tepuk-tepung-tawar', title:'Tepuk Tepung Tawar', province:'riau', region:'Riau', image:'images/traditions/tepuk.jpg', info:'Ritual menolak bala & doa keselamatan dengan tepung tawar.', fun:'Ada pada banyak hajat, dari pernikahan hingga pindah rumah.', yt:['https://youtu.be/Q3yGFTJoky0?si=R8xx7Ic_dA1FcIM7']},
+  {id:'zapin-riau', title:'Zapin Melayu', province:'riau', region:'Riau', image:'images/arts/zapin.jpeg', info:'Tari pergaulan berakar budaya Melayu–Arab.', fun:'Diiringi gambus & marwas.', yt:['https://youtu.be/kGpzlNhddHo?si=H7_w5RCynJMYW6se']},
+  {id:'mandi-safar-riau', title:'Mandi Safar', province:'riau', region:'Riau pesisir', image:'images/traditions/safar.jpg', info:'Tradisi mandi bersama di bulan Safar untuk tolak bala.', fun:'Meriah dengan pasar rakyat & zikir.', yt:['https://youtu.be/wjX2etCyj1E?si=YvAtdNy3mXVT9tOj']},
+  {id:'gasing-melayu-riau', title:'Gasing Melayu', province:'riau', region:'Riau', image:'images/games/gasing.jpg', info:'Permainan gasing tradisional dengan adu putaran.', fun:'Ada festival gasing antar kampung.', yt:['https://youtu.be/jcwNyUgzo_o?si=O0-spoIlmEC96CID']},
+
+  /* KEPULAUAN RIAU */
+  {id:'joget-dangkong', title:'Joget Dangkong', province:'kepulauan-riau', region:'Kepri', image:'images/traditions/joget-dakong.jpg', info:'Tari pergaulan riang berpasangan.', fun:'Musiknya enerjik dan komunikatif.', yt:['https://youtu.be/418WxijaDrc?si=4LkMvwo2LmTdNJgN']},
+  {id:'mandi-safar-penyengat', title:'Mandi Safar Penyengat', province:'kepulauan-riau', region:'Penyengat, Kepri', image:'images/traditions/safar.jpg', info:'Ritual mandi Safar di Pulau Penyengat.', fun:'Berbalut tradisi Melayu & sejarah Kesultanan Riau–Lingga.', yt:['https://youtu.be/wi64dSAEm6s?si=ZYrYGTainPd6GKaK']},
+  {id:'zapin-penyengat', title:'Zapin Penyengat', province:'kepulauan-riau', region:'Kepri', image:'images/arts/zapin.jpeg', info:'Varian zapin khas pulau Penyengat.', fun:'Syairnya sarat nasihat.', yt:['https://youtu.be/kGpzlNhddHo?si=D2_ESHKWr5G8ZF0Y']},
+  {id:'perang-ketupat-belinyu', title:'Perang Ketupat', province:'kepulauan-riau', region:'Belinyu/lingga', image:'images/traditions/perang-ketupat.jpg', info:'Ritual lempar ketupat sebagai syukur & kebersamaan.', fun:'Makna utama: mempererat persaudaraan.', yt:['https://youtu.be/ds77oGzOIxI?si=Ia3RA0sBroMLsV12']},
+  {id:'perahu-layar-trad-kepri', title:'Lomba Perahu Layar Tradisional', province:'kepulauan-riau', region:'Kepri', image:'images/traditions/lomba-perahu.jpg', info:'Balap perahu layar nelayan di perairan Kepri.', fun:'Momentum wisata bahari rakyat.', yt:['https://youtu.be/Q2dHq5oorMM?si=Qyw6AhazDJvRn9xB']},
+
+  /* JAMBI */
+  {id:'kenduri-sko', title:'Kenduri Sko', province:'jambi', region:'Kerinci/Jambi', image:'images/traditions/kenduri-sko.jpg', info:'Upacara penobatan/pengesahan pemimpin adat Kerinci.', fun:'Memadukan doa, tari, dan sajian adat.', yt:['https://youtu.be/PMUJeaqXPWQ?si=IZDHG1eTCfmU9eYa']},
+  {id:'sekapur-sirih-jambi', title:'Tari Sekapur Sirih', province:'jambi', region:'Jambi', image:'images/traditions/sekapur-sirih.jpg', info:'Tari penyambutan tamu agung dengan simbol jamuan sirih.', fun:'Penari membawa cerana berisi sirih.', yt:['https://youtu.be/_XthFFdz_jA?si=09GGfpMPLvxvh_hI']},
+  {id:'besale-jambi', title:'Besale', province:'jambi', region:'Jambi', image:'images/traditions/besale.jpg', info:'Ritual pengobatan tradisional dengan mantra dan musik.', fun:'Dilakukan oleh pawang/dukun adat.', yt:['https://youtu.be/PxMkPOOvztE?si=UrSrbEqzJKKXLean']},
+  {id:'bakaran-sahur', title:'Bakaran Sahur', province:'jambi', region:'Jambi', image:'images/traditions/bakaran-sahur.jpeg', info:'Tradisi membangunkan sahur dengan bunyi-bunyian api/obor.', fun:'Riang dan melibatkan anak-anak.', yt:['https://youtube.com/shorts/Sf9a61iRHwE?si=zz9OyOfEhWAGO5fQ']},
+  {id:'tari-rentak-kudo', title:'Rentak Kudo', province:'jambi', region:'Kerinci', image:'images/traditions/rentak-kudo.jpg', info:'Tari dinamis dengan hentakan seperti kuda.', fun:'Sarat hiburan rakyat.', yt:['https://youtu.be/pcWyY9Wp7hA?si=afQsrcYq4Oc-zRyW']},
+
+  /* SUMATERA SELATAN */
+  {id:'gending-sriwijaya', title:'Gending Sriwijaya', province:'sumatera-selatan', region:'Palembang, Sumsel', image:'images/arts/gending.jpg', info:'Tari istana anggun untuk penyambutan.', fun:'Busana songket & siger memperkuat wibawa.', yt:['https://youtu.be/_iOgonp5hEk?si=KZiFZ3x9x7Wxz633']},
+  {id:'sedekah-bumi-sumsel', title:'Sedekah Bumi', province:'sumatera-selatan', region:'Sumsel', image:'images/traditions/sedekah.jpg', info:'Syukuran panen & doa untuk alam.', fun:'Dilakukan di berbagai desa.', yt:['https://youtu.be/gwR_vwQCdTU?si=PPtYa9wUyXnQ6PS1']},
+  {id:'arak-pengantin-palembang', title:'Arak Pengantin Palembang', province:'sumatera-selatan', region:'Palembang', image:'images/traditions/arak-pengantin.jpg', info:'Arak-arakan pengantin berbusana adat.', fun:'Ragam prosesi & pantun adat.', yt:['https://youtu.be/w7U0qMvwfO0?si=4gG-MIZ0KnU4P8Xp']},
+  {id:'tanjak-songket', title:'Adat Songket Palembang', province:'sumatera-selatan', region:'Sumsel', image:'images/traditions/tanjak-songket.jpeg', info:'Pemakaian songket dalam upacara adat.', fun:'Motifnya sarat filosofi.', yt:['https://youtu.be/k8Ff-hL02Eg?si=WcK95vEehx16jpsU']},
+  {id:'begambus-sumsel', title:'Gambus Palembang', province:'sumatera-selatan', region:'Sumsel', image:'images/traditions/begambus.jpg', info:'Hiburan rakyat bernuansa Melayu-Arab.', fun:'Sering mengiringi acara adat.', yt:['https://youtu.be/LbLuRmlKviE?si=I9L6AKPqu2g_b2Sp']},
+
+  /* BANGKA BELITUNG */
+  {id:'nganggung-babel', title:'Nganggung', province:'bangka-belitung', region:'Bangka Belitung', image:'images/traditions/nganggung.jpg', info:'Warga membawa dulang berisi makanan ke masjid/balai untuk disantap bersama.', fun:'Simbol kebersamaan & sedekah.', yt:['https://youtu.be/Gs9LZPLjFPY?si=olLgfzmtKYeYC8pv']},
+  {id:'cual-babel', title:'Tenun Cual', province:'bangka-belitung', region:'Bangka Belitung', image:'images/traditions/tenun-cual.jpg', info:'Kain tenun eksklusif dengan motif bahari.', fun:'Dulu identik busana bangsawan.', yt:['https://youtu.be/ORSTq1IH8UI?si=BqSWwOI1KgW_-bM3']},
+  {id:'muang-jong', title:'Muang Jong', province:'bangka-belitung', region:'Belitung', image:'images/traditions/muang-jong.jpg', info:'Ritual melarung perahu kecil sebagai doa keselamatan pelaut.', fun:'Akrab dengan budaya maritim lokal.', yt:['https://youtu.be/s7mjjmkofl8?si=0jmaPrXJv04Nhq8C']},
+  {id:'perang-ketupat-babel', title:'Perang Ketupat', province:'bangka-belitung', region:'Belinyu', image:'images/traditions/perang-ketupat.jpg', info:'Warga saling lempar ketupat sebagai tanda syukur.', fun:'Meneguhkan persaudaraan.', yt:['https://youtu.be/HtKypFINV0I?si=DPrFnNrYokEvYR-q']},
+  {id:'sedekah-ruwahan-babel', title:'Sedekah Ruwahan', province:'bangka-belitung', region:'Babel', image:'images/traditions/ruwahan.jpg', info:'Doa bersama jelang Ramadan/arwah leluhur.', fun:'Berbagi makanan tradisional.', yt:['https://youtu.be/3u0BnSC01GQ?si=ikYayJ4Mr7-ZGtZH']},
+
+  /* BENGKULU */
+  {id:'tabot-bengkulu', title:'Tabot', province:'bengkulu', region:'Bengkulu', image:'images/traditions/tabot-pantai.jpeg', info:'Peringatan Asyura dengan arak Tabot ke pantai.', fun:'Memadukan sejarah & budaya lokal.', yt:['https://youtu.be/jVJ1R7UNaS8?si=A3LL_Ph4MC59Z846']},
+  {id:'dol-bengkulu', title:'Dol Bengkulu', province:'bengkulu', region:'Bengkulu', image:'images/traditions/dot.jpg', info:'Ansambel bedug raksasa dengan ritme khas.', fun:'Ikon festival kota.', yt:['https://youtu.be/YF8ns7lZAMw?si=B-BYwqL4a17kAvPi']},
+  {id:'tabot-arak', title:'Arak Seroban', province:'bengkulu', region:'Bengkulu', image:'images/traditions/tabot.jpg', info:'Bagian dari rangkaian Tabot dengan arak-arakan.', fun:'Meriah dan sakral.', yt:['https://youtu.be/jVJ1R7UNaS8?si=A3LL_Ph4MC59Z846']},
+  {id:'bimbang-bengkulu', title:'Bimbang Adat', province:'bengkulu', region:'Bengkulu', image:'images/traditions/bimbang-adat.jpg', info:'Musyawarah & jamuan adat masyarakat setempat.', fun:'Mengikat persatuan warga.', yt:['https://youtu.be/m3OxosQjwOk?si=lPrfMxftXiiWcFdo']},
+  {id:'sedekah-laut-bengkulu', title:'Sedekah Laut', province:'bengkulu', region:'Pesisir Bengkulu', image:'images/traditions/sedekah-laut.jpeg', info:'Doa keselamatan nelayan & hasil laut.', fun:'Melarung sesaji ke laut.', yt:['https://youtu.be/seSWSXREhGk?si=Yr0JK6jNm3SYPc-K']},
+
+  /* LAMPUNG */
+  {id:'tapis-lampung', title:'Tapis Lampung', province:'lampung', region:'Lampung', image:'images/traditions/tapis-lampung.jpg', info:'Kain sulam benang emas untuk hajat besar.', fun:'Motif kapal & flora punya makna.', yt:['https://youtu.be/RaKPu0s1ftA?si=btf7rJRdx_BFaJRP']},
+  {id:'sekaton-lampung', title:'Begawi Adat', province:'lampung', region:'Lampung', image:'images/traditions/sekaton-lampung.jpg', info:'Rangkaian adat pesta pernikahan/pengangkatan gelar.', fun:'Menjunjung nilai sai batin & pepadun.', yt:['https://youtu.be/TaxHTBrD1pU?si=7EURYWvjSUF0kmBI']},
+  {id:'sekura-cakak-lampung', title:'Sekura Cakak', province:'lampung', region:'Lampung Barat', image:'images/traditions/sekura-cakak-lampung.jpeg', info:'Pawai topeng rakyat saat lebaran.', fun:'Penuh warna dan jenaka.', yt:['https://youtu.be/oLz43fKqHsg?si=_kkUudbhkR3TnJxn']},
+  {id:'ngikan-makhan', title:'Ngejuluk Makhan/Nyubuk', province:'lampung', region:'Lampung', image:'images/traditions/nyubuk.jpg', info:'Tradisi lamaran & hantaran adat.', fun:'Bahasa adat sangat kental.', yt:['https://youtube.com/shorts/Z136AJ7Tve8?si=_JVz73_uJycuqnNb']},
+
+  /* BANTEN */
+  {id:'debus-banten', title:'Debus', province:'banten', region:'Banten', image:'images/traditions/debus.jpg', info:'Atraksi ketahanan tubuh bernuansa spiritual.', fun:'Identik dengan syair zikir & pencak.', yt:['https://youtu.be/Mic8piTY72Y?si=aCx-6lv9NyjhITvi']},
+  {id:'rampak-bedug-banten', title:'Rampak Bedug', province:'banten', region:'Banten', image:'images/traditions/rampak.jpg', info:'Tabuhan bedug serentak yang kolosal.', fun:'Sering tampil di bulan Ramadan.', yt:['https://youtu.be/_rzWeR8furs?si=Dm-IxAZZzMs2c1so']},
+  {id:'seba-baduy', title:'Seba Baduy', province:'banten', region:'Lebak, Banten', image:'images/traditions/seba.jpg', info:'Warga Baduy berjalan kaki menyerahkan hasil bumi ke pemerintah daerah.', fun:'Simbol hubungan rakyat–pemimpin.', yt:['https://youtu.be/Uey7myytKfY?si=8cc0M7ik2r4jvhHm']},
+  {id:'kawalu-baduy', title:'Kawalu (Baduy)', province:'banten', region:'Baduy', image:'images/traditions/kawalu.jpeg', info:'Masa puasa & menutup diri untuk memelihara alam.', fun:'Wisatawan tidak diperkenankan masuk.', yt:['https://youtu.be/cigNGlDe5Y0?si=7PPnUgOor_P0heyZ']},
+  {id:'hajat-laut-banten', title:'Hajat Laut', province:'banten', region:'Pesisir Banten', image:'images/traditions/hajat-laut.jpg', info:'Syukuran nelayan & melarung sesaji.', fun:'Diiringi ritual & kesenian pesisir.', yt:['https://youtu.be/TpgeUpgxog4?si=SyUc7q8g55pJjf0F']},
+
+  /* DKI JAKARTA */
+  {id:'ondel-ondel', title:'Ondel-ondel', province:'dki-jakarta', region:'Betawi (Jakarta)', image:'images/traditions/ondel-ondel.jpg', info:'Boneka raksasa arak-arak pengusir bala yang jadi ikon Betawi.', fun:'Diiringi tanjidor/gambang kromong.', yt:['https://youtu.be/6WJUht0Tjzo?si=45cA6lqnutUY1MRY']},
+  {id:'palang-pintu', title:'Palang Pintu', province:'dki-jakarta', region:'Betawi', image:'images/traditions/palang.jpg', info:'Adu pantun & silat dalam resepsi pernikahan Betawi.', fun:'Lucu tapi sarat makna.', yt:['https://youtu.be/tCjwNQZbeL4?si=rP1Y_ZjbIBFh-PZK']},
+  {id:'nyorog-betawi', title:'Nyorog', province:'dki-jakarta', region:'Betawi', image:'images/traditions/nyorog.jpeg', info:'Tradisi memberi bingkisan makanan kepada kerabat saat lebaran.', fun:'Penguat tali keluarga.', yt:['https://youtu.be/oPwKyXWkfKY?si=Dun7VNKT6wMIp9f_']},
+  {id:'roti-buaya', title:'Roti Buaya', province:'dki-jakarta', region:'Betawi', image:'images/traditions/roti-buaya.jpg', info:'Roti berbentuk buaya sebagai simbol kesetiaan di pernikahan.', fun:'Biasanya dipajang bersama seserahan.', yt:['https://youtu.be/aYNmtnInm1Q?si=ylK20TJ054u60M7W']},
+  {id:'sedekah-laut-seribu', title:'Sedekah Laut Kep. Seribu', province:'dki-jakarta', region:'Kepulauan Seribu', image:'images/traditions/sedekah-laut-pulau-seribu.jpeg', info:'Pesta laut nelayan Jakarta Utara & Kep. Seribu.', fun:'Melarung kepala kerbau/sesaji.', yt:['https://youtu.be/ev9p4x24-QI?si=b52aqf2eFML9YRDw']},
+
+  /* JAWA BARAT */
+  {id:'seren-taun', title:'Seren Taun', province:'jawa-barat', region:'Kuningan/Ciptagelar', image:'images/traditions/seren-taun.jpg', info:'Syukuran panen & penyerahan padi ke lumbung adat.', fun:'Diiringi helaran seni & dogdog.', yt:['https://youtu.be/rGgUVhsCDoA?si=oWrCmNbdtRPYfSxX']},
+  {id:'ngarot-indramayu', title:'Ngarot', province:'jawa-barat', region:'Indramayu', image:'images/traditions/ngarot.jpeg', info:'Syukuran tanam padi yang melibatkan muda-mudi.', fun:'Mahkota bunga Ngarot sangat khas.', yt:['https://youtu.be/SR4ZkW3VGeo?si=CPIPUW6_dYdmhNww']},
+  {id:'mapag-sri', title:'Mapag Sri', province:'jawa-barat', region:'Cirebon', image:'images/traditions/mapag-sri.jpg', info:'Menyambut Dewi Sri (padi) sebelum musim tanam.', fun:'Ritual doa dan arak-arak.', yt:['https://youtu.be/9bzcQ-eWXxw?si=3QvcQc3Sa13cEvjU']},
+  {id:'hajat-laut-pangandaran', title:'Hajat Laut Pangandaran', province:'jawa-barat', region:'Pangandaran', image:'images/traditions/hajat-laut.jpg', info:'Upacara melarung sesaji ke laut selatan.', fun:'Atraksi perahu & kesenian pesisir.', yt:['https://youtu.be/v8FvuyOO3cA?si=OHW52CpcLHgVKKNG']},
+  {id:'sisingaan-subang', title:'Sisingaan', province:'jawa-barat', region:'Subang', image:'images/traditions/ssingaan.jpeg', info:'Arak-arak patung singa mengusung anak (khitanan dll).', fun:'Musik tanjidor/ketuk tilu mengiringi.', yt:['https://youtu.be/DNxcgj3OMXQ?si=4LQFE0zL_u9bQ0qk']},
+
+  /* JAWA TENGAH */
+  {id:'dugderan-semarang', title:'Dugderan', province:'jawa-tengah', region:'Semarang', image:'images/traditions/dugderan.jpg', info:'Festival menyambut Ramadan dengan bedug (dug) dan meriam karbit (der).', fun:'Maskot Warak Ngendog.', yt:['https://youtu.be/dmSZH9ofJ20?si=AGWTTg1j2rpHt--p']},
+  {id:'syawalan-jateng', title:'Syawalan Pantai', province:'jawa-tengah', region:'Pantura Jateng', image:'images/traditions/syawalan.jpg', info:'Lebaran ketupat di pantai dengan aneka lomba & doa.', fun:'Ikon wisata keluarga.', yt:['https://youtu.be/rD1lIuh1kVM?si=RJGrNyCEptBItW1t']},
+  {id:'grebeg-sudiro', title:'Grebeg Sudiro', province:'jawa-tengah', region:'Solo', image:'images/traditions/grebeg.jpeg', info:'Perpaduan budaya Tionghoa-Jawa jelang Imlek.', fun:'Kirab gunungan kue keranjang.', yt:['https://youtu.be/GdlIxwtQr_I?si=8ZgOolXDbe8NnYEL']},
+  {id:'ruwatan-jateng', title:'Ruwatan', province:'jawa-tengah', region:'Jawa Tengah', image:'images/traditions/ruwatan.jpg', info:'Upacara tolak bala membersihkan sukerta.', fun:'Diiringi wayang atau doa adat.', yt:['https://youtu.be/GKKhlRoOyu4?si=0Mzx_ZuyzKK60-KA']},
+  {id:'sedekah-bumi-jateng', title:'Sedekah Bumi', province:'jawa-tengah', region:'Desa-desa Jateng', image:'images/traditions/Sedekah-Bumi.jpg', info:'Syukuran hasil panen dan doa keselamatan.', fun:'Gunungan hasil bumi diarak.', yt:['https://youtu.be/ZOw3gD9N7k8?si=GezmSzdFBJ_7m_5s']},
+
+  /* DI YOGYAKARTA */
+  {id:'sekaten-jogja', title:'Sekaten', province:'diyogyakarta', region:'Keraton Yogyakarta', image:'images/traditions/sekaten.jpg', info:'Peringatan Maulid dengan gamelan Sekaten.', fun:'Puncaknya Grebeg Maulud.', yt:['https://youtu.be/hTMzCrc1syI?si=bpjs6AlrX5yNio29']},
+  {id:'grebeg-jogja', title:'Grebeg', province:'diyogyakarta', region:'Yogyakarta', image:'images/traditions/grebeg-yogya.jpeg', info:'Kirab gunungan pada hari besar Islam.', fun:'Gunungan dibagikan ke rakyat.', yt:['https://youtu.be/bpn__8hsUC8?si=DhLY5oPTcyVB-oUw']},
+  {id:'labuhan-parangkusumo', title:'Labuhan Parangkusumo', province:'diyogyakarta', region:'Pantai Selatan', image:'images/traditions/Labuhan-Pantai-Parangkusumo.jpg', info:'Larung sesaji ke laut selatan.', fun:'Simbol harmoni manusia-alam.', yt:['https://youtu.be/_VMJllvgBFU?si=R266xDdON_wZi7Ai']},
+  {id:'siraman-keraton', title:'Siraman Adat', province:'diyogyakarta', region:'Keraton', image:'images/traditions/siraman-adat.jpg', info:'Memandikan calon pengantin bangsawan.', fun:'Ritual sarat simbol kesucian.', yt:['https://youtu.be/EkyDyd4CEng?si=4CoogUnqfXjRa4G3']},
+  {id:'mubeng-beteng', title:'Mubeng Beteng', province:'diyogyakarta', region:'Yogyakarta', image:'images/traditions/mubang-beteng.jpg', info:'Tradisi berjalan kaki mengelilingi benteng kraton.', fun:'Dilakukan dengan hening.', yt:['https://youtu.be/m4j47GK3Xco?si=0j9uKk0SFeSOYu4S']},
+
+  /* JAWA TIMUR */
+  {id:'karapan-sapi', title:'Karapan Sapi', province:'jawa-timur', region:'Madura, Jatim', image:'images/traditions/karapan.jpg', info:'Pacuan sapi dengan joki berdiri di kaleles.', fun:'Ajang prestise Madura.', yt:['https://youtube.com/shorts/itaRiBF8mps?si=vD5OJDlJ1xDdq8sp']},
+  {id:'reog-ponorogo', title:'Reog Ponorogo', province:'jawa-timur', region:'Ponorogo', image:'images/arts/reog.jpeg', info:'Kesenian barongan raksasa dan warok.', fun:'Topeng bisa >30 kg.', yt:['https://youtu.be/fem1y8tJS1k?si=WhnMLWN2mLWbdJfj']},
+  {id:'kasada-bromo', title:'Yadnya Kasada', province:'jawa-timur', region:'Tengger', image:'images/traditions/yadya.jpg', info:'Upacara melarung sesaji ke kawah Bromo.', fun:'Syukur & tolak bala masyarakat Tengger.', yt:['https://youtu.be/Hh3bPFDPFZQ?si=7rpxvfA3EGhOsBPd']},
+  {id:'larung-sesaji-muncar', title:'Larung Sesaji Muncar', province:'jawa-timur', region:'Banyuwangi', image:'images/traditions/larung..jpg', info:'Sedekah laut nelayan Muncar.', fun:'Perahu hias & doa bersama.', yt:['https://youtu.be/olaUpNrK54s?si=T9RdsNQh3cfPODHi']},
+  {id:'seblang-banyuwangi', title:'Seblang', province:'jawa-timur', region:'Banyuwangi', image:'images/traditions/', info:'Ritual tari untuk tolak bala dan penyucian desa.', fun:'Penarinya dipilih secara khusus.', yt:[]},
+
+  /* BALI */
+  {id:'ngaben', title:'Ngaben', province:'bali', region:'Bali', image:'images/traditions/ngaben.jpg', info:'Upacara kremasi umat Hindu Bali sebagai penyucian roh.', fun:'Ada bade/menara dan lembu simbolik.', yt:['https://youtu.be/wDUHa8qsub8?si=NHuSnmKnmyowRI6C']},
+  {id:'melasti', title:'Melasti', province:'bali', region:'Bali', image:'images/traditions/melasti.jpg', info:'Penyucian pratima & diri ke laut/danau jelang Nyepi.', fun:'Iringan barisan panjang menuju segara.', yt:['https://youtu.be/XkQckuQA0Y0?si=imkB4KPWbuouLHD-']},
+  {id:'nyepi', title:'Nyepi (Caka)', province:'bali', region:'Bali', image:'images/traditions/nyepi.jpg', info:'Hari hening: amati karya, geni, lelungan, lelanguan.', fun:'Malam sebelumnya ada pawai ogoh-ogoh.', yt:['https://youtu.be/XR_-c9_ULrY?si=NTs_dQP16H2KNYCC']},
+  {id:'makepung', title:'Makepung', province:'bali', region:'Jembrana', image:'images/traditions/makepung.jpg', info:'Balap kerbau menarik pedati di sawah.', fun:'Busana kerbau dihias meriah.', yt:['https://youtu.be/T-IK-6LvON0?si=RRdrBvvXe0423VFm']},
+  {id:'omed-omedan', title:'Omed-omedan', province:'bali', region:'Denpasar', image:'images/traditions/omed-omedan.jpg', info:'Tradisi “tarik-menarik” muda-mudi pasca Nyepi.', fun:'Dimaknai sebagai perekat kebersamaan.', yt:['https://youtu.be/Cu9mwaOgtrs?si=rfKu0iiHoIW5yC18']},
+
+  /* NUSA TENGGARA BARAT */
+  {id:'perang-topat', title:'Perang Topat', province:'ntb', region:'Lombok', image:'images/traditions/perang-topat.jpg', info:'Warga saling lempar ketupat di Pura Lingsar sebagai simbol kerukunan.', fun:'Wujud harmoni Islam-Hindu Sasak-Bali.', yt:['https://youtu.be/HbVJ41GeUyQ?si=u1h3M4aBiHs28oUe']},
+  {id:'bau-nyale', title:'Bau Nyale', province:'ntb', region:'Lombok', image:'images/traditions/bau-nyale.jpg', info:'Berburu cacing laut (nyale) yang muncul periodik.', fun:'Terkait legenda Putri Mandalika.', yt:['https://youtu.be/jKpKXUQFHEE?si=_reDTptlctQjciIu']},
+  {id:'peresean', title:'Peresean', province:'ntb', region:'Lombok', image:'images/traditions/peresean.jpg', info:'Adu ketangkasan rotan & perisai oleh pepadu.', fun:'Kini bersifat atraksi budaya.', yt:['https://youtu.be/WAAX7UH7a_I?si=4KhpVOxIBPN24NtS']},
+  {id:'gendang-beleq', title:'Gendang Beleq', province:'ntb', region:'Lombok', image:'images/traditions/gendang-beleq.jpg', info:'Ansambel gendang besar yang dimainkan sambil berjalan.', fun:'Sering untuk penyambutan.', yt:['https://youtu.be/5lAMOLuxFBg?si=ThizglpSYzbsJoBW']},
+  {id:'lebaran-topat', title:'Lebaran Topat', province:'ntb', region:'Lombok', image:'images/traditions/lebaran-topat.jpg', info:'Syukuran sepekan setelah Idulfitri.', fun:'Makan ketupat bersama di tempat wisata.', yt:['https://youtu.be/1Gn2d6Q6sWs?si=qCy-ZwZMwPB-zFAN']},
+
+  /* NUSA TENGGARA TIMUR */
+  {id:'pasola-sumba', title:'Pasola', province:'ntt', region:'Sumba', image:'images/traditions/pasola-sumba.jpeg', info:'Perang tombak kayu di padang sabana sebagai ritual musim tanam.', fun:'Diawali ritual adat & pencarian nyale.', yt:['https://youtu.be/Wcb0JQnAetI?si=tx2cHe2u8Aed-D9m']},
+  {id:'reba-ngada', title:'Reba', province:'ntt', region:'Ngada (Flores)', image:'images/traditions/reba-ngada.jpg', info:'Pesta syukur pergantian tahun adat.', fun:'Ada makan adat & tarian.', yt:['https://youtu.be/L3LO95aPVg0?si=mVtGDfeMJjA14bfl']},
+  {id:'likurai-belu', title:'Likurai', province:'ntt', region:'Belu/TTU', image:'images/traditions/likurai-belu.jpg', info:'Tarian genderang kecil dalam upacara adat.', fun:'Ritmenya cepat & kompak.', yt:['https://youtu.be/oRH7opLvAuw?si=YQKhDivlDgUoJJXp']},
+  {id:'tebe-timor', title:'Tebe (Tarian Lingkar)', province:'ntt', region:'Timor', image:'images/traditions/tebe-timor.jpg', info:'Tarian lingkar bergandengan tangan dengan nyanyian.', fun:'Simbol persatuan warga.', yt:['https://youtu.be/kG3b2R5xhqk?si=DAYcp-3FQaniO83x']},
+
+  /* KALIMANTAN BARAT */
+  {id:'gawai-dayak-kalbar', title:'Gawai Dayak/Naik Dango', province:'kalimantan-barat', region:'Dayak, Kalbar', image:'images/traditions/gawai-dayakjpg.jpg', info:'Pesta panen Dayak dengan ritual & tari tradisional.', fun:'Digelar meriah di berbagai kabupaten.', yt:['https://youtu.be/dc0aJaG_2J4?si=uvg7icKTmKSNCWnb']},
+  {id:'robo-robo', title:'Robo-robo', province:'kalimantan-barat', region:'Melayu Sambas', image:'images/traditions/robo-robo.jpg', info:'Peringatan kedatangan Sultan Sambas ke muara.', fun:'Syukuran & makan bersama di tepi sungai.', yt:['https://youtu.be/ADoORSgwlTw?si=kM6OD6WyXNpQKHpe']},
+  {id:'saprahan', title:'Saprahan', province:'kalimantan-barat', region:'Pontianak/Sambas', image:'images/traditions/saprahan.jpg', info:'Makan bersama duduk bersila dalam satu talam.', fun:'Menandakan kebersamaan & egaliter.', yt:['https://youtu.be/lwN87WRVL38?si=7k5B_a1NXdwjpMVB']},
+  {id:'bidar-kalbar', title:'Lomba Perahu Bidar', province:'kalimantan-barat', region:'Sungai Kapuas', image:'images/traditions/bidar.png', info:'Balap perahu tradisional di sungai besar.', fun:'Atraksi air paling ditunggu.', yt:['https://youtu.be/CDFrz3vuVb8?si=7947YxvqX4pqzZwq']},
+  {id:'manyanggar-dayak', title:'Manyanggar', province:'kalimantan-barat', region:'Dayak', image:'images/traditions/manyanggar.jpg', info:'Ritual pembersihan kampung dari bala.', fun:'Dipimpin basir/balian.', yt:['https://youtu.be/rOu9ln_JcAA?si=P5JgTFCe89Ysc8sF']},
+
+  /* KALIMANTAN TENGAH */
+  {id:'tiwah-kaharingan', title:'Tiwah', province:'kalimantan-tengah', region:'Dayak Ngaju, Kalteng', image:'images/traditions/tiwah.jpg', info:'Ritual penghantaran tulang ke sandung menurut Kaharingan.', fun:'Prosesi panjang dengan mantra & musik.', yt:['https://youtu.be/TNzZbPSjkjc?si=CcTNelLhtNKQLodS']},
+  {id:'manetek-pantan', title:'Manetek Pantan', province:'kalimantan-tengah', region:'Kalteng', image:'images/traditions/manetek.jpg', info:'Pemotongan pantan (kayu) sebagai penolak bala & syukur.', fun:'Diiringi tari & gong.', yt:['https://youtu.be/x4hZoLeo5n8?si=t3oPjT7TJyMh7O_d']},
+  {id:'babukung', title:'Babukung', province:'kalimantan-tengah', region:'Barito', image:'images/traditions/Babukung.jpg', info:'Ritual tari topeng Dayak yang sakral.', fun:'Busana dan topeng penuh simbol.', yt:['https://youtu.be/wRB38JkRuOk?si=U-MCEDxDyem3YrKx']},
+  {id:'piduduk-kalteng', title:'Piduduk', province:'kalimantan-tengah', region:'Kalteng', image:'images/traditions/piduduk.jpg', info:'Upacara permohonan keselamatan keluarga.', fun:'Menggunakan sesaji khusus.', yt:['https://youtube.com/shorts/TPLjBA8Cxcs?si=yYFmtIrzcZOGAWx3']},
+  {id:'festival-isen-mulang', title:'Isen Mulang (Gawai Kalteng)', province:'kalimantan-tengah', region:'Palangka Raya', image:'images/traditions/isen-mulang.jpeg', info:'Pesta budaya tahunan multi-lomba khas Kalteng.', fun:'Ada karungut, dayung tradisional, dsb.', yt:['https://youtu.be/wos0KBbQThU?si=QCyM9ChpjR_6j3rv']},
+
+  /* KALIMANTAN SELATAN */
+  {id:'baayun-maulid', title:'Baayun Maulid', province:'kalimantan-selatan', region:'Martapura, Kalsel', image:'', info:'Mengayun bayi sambil berselawat saat Maulid.', fun:'Diyakini membawa berkah.', yt:[]},
+  {id:'aruh-ganal', title:'Aruh Ganal', province:'kalimantan-selatan', region:'Dayak Meratus', image:'', info:'Pesta adat besar pascapanen/ganti tahun adat.', fun:'Ritual panjang di pegunungan.', yt:[]},
+  {id:'bakuba-kalsel', title:'Bakuba', province:'kalimantan-selatan', region:'Banjar', image:'', info:'Berbalas pantun/nyanyian tradisional Banjar.', fun:'Sering mengiringi pesta rakyat.', yt:[]},
+  {id:'batapung-tawar', title:'Batapung Tawar', province:'kalimantan-selatan', region:'Banjar', image:'', info:'Ritual tepung tawar dalam hajat Banjar.', fun:'Mirip tepung tawar Melayu.', yt:[]},
+  {id:'badudus', title:'Badudus', province:'kalimantan-selatan', region:'Banjar', image:'', info:'Ritual mandi pengantin sebelum akad.', fun:'Untuk penyucian lahir batin.', yt:[]},
+
+  /* KALIMANTAN TIMUR */
+  {id:'erau-kutai', title:'Erau', province:'kalimantan-timur', region:'Kutai, Kaltim', image:'', info:'Pesta adat Kesultanan Kutai dengan upacara & atraksi belimbur.', fun:'Puncaknya siram-siraman massal.', yt:[]},
+  {id:'mappanretasi-kaltim', title:'Mappanretasi', province:'kalimantan-timur', region:'Pesisir Kaltim', image:'', info:'Ritual Bugis pesisir memberi sesaji ke laut.', fun:'Dimaknai sebagai syukur nelayan.', yt:[]},
+  {id:'belimbur-samarinda', title:'Belimbur', province:'kalimantan-timur', region:'Samarinda', image:'', info:'Saling siram air pada puncak erau daerah.', fun:'Simbol pembersihan diri.', yt:[]},
+  {id:'giring-giring', title:'Giring-giring', province:'kalimantan-timur', region:'Dayak', image:'', info:'Tari/alat musik bambu khas Dayak setempat.', fun:'Sering mengiringi penerimaan tamu.', yt:[]},
+  {id:'nondoi-dayak', title:'Nondoi', province:'kalimantan-timur', region:'Dayak', image:'', info:'Musyawarah adat & pesta kampung.', fun:'Menjaga kearifan lokal.', yt:[]},
+
+  /* KALIMANTAN UTARA */
+  {id:'iraw-tengkayu', title:'Iraw Tengkayu', province:'kalimantan-utara', region:'Tarakan', image:'', info:'Pesta laut melarung sesaji ke laut.', fun:'Ikon budaya Kaltara.', yt:[]},
+  {id:'kancet-ledo', title:'Kancet Ledo (Enggang)', province:'kalimantan-utara', region:'Dayak Kenyah', image:'', info:'Tari perempuan menirukan burung enggang.', fun:'Properti bulu enggang & selendang.', yt:[]},
+  {id:'lele-ngayu', title:'Leleng', province:'kalimantan-utara', region:'Dayak', image:'', info:'Nyanyian/lantunan tradisional Dayak Kenyah.', fun:'Sarat cerita rakyat.', yt:[]},
+  {id:'peuma-dayak', title:'Upacara Peuma', province:'kalimantan-utara', region:'Dayak', image:'', info:'Ritual terkait ladang/perladangan tradisional.', fun:'Dipimpin kepala adat.', yt:[]},
+  {id:'adat-mendu-kei', title:'Mendu (Teater Rakyat)', province:'kalimantan-utara', region:'Pesisir Kaltara', image:'', info:'Teater rakyat Melayu pesisir Kalimantan.', fun:'Komedinya menghibur.', yt:[]},
+
+  /* SULAWESI UTARA */
+  {id:'tulude', title:'Tulude', province:'sulawesi-utara', region:'Sangihe, Sulut', image:'', info:'Syukuran tutup tahun adat dengan kue tamo.', fun:'Doa & musik khas Sangihe.', yt:[]},
+  {id:'mapalus', title:'Mapalus', province:'sulawesi-utara', region:'Minahasa', image:'', info:'Gotong royong tradisional masyarakat Minahasa.', fun:'Pekerjaan berat jadi ringan bersama.', yt:[]},
+  {id:'kabasaran', title:'Kabasaran', province:'sulawesi-utara', region:'Minahasa', image:'', info:'Tari perang dengan pedang & tombak.', fun:'Diiringi musik pukul tegas.', yt:[]},
+  {id:'pengucapan-syukur', title:'Pengucapan Syukur', province:'sulawesi-utara', region:'Sulut', image:'', info:'Syukuran panen yang kini jadi tradisi lintas desa.', fun:'Warga membuka rumah untuk tamu.', yt:[]},
+  {id:'fiesta-bunaken', title:'Pesta Laut Bunaken', province:'sulawesi-utara', region:'Manado', image:'', info:'Doa bersama dan parade laut di kawasan Bunaken.', fun:'Merawat budaya bahari.', yt:[]},
+
+  /* GORONTALO */
+  {id:'tumbilotohe', title:'Tumbilotohe', province:'gorontalo', region:'Gorontalo', image:'', info:'Tradisi menyalakan lampu minyak jelang Idulfitri.', fun:'Malam jadi terang benderang.', yt:[]},
+  {id:'moloopu', title:'Moloopu', province:'gorontalo', region:'Gorontalo', image:'', info:'Prosesi pelantikan/adat pemerintahan tradisional.', fun:'Menghadirkan simbol kerajaan lama.', yt:[]},
+  {id:'walima', title:'Walima', province:'gorontalo', region:'Gorontalo', image:'', info:'Peringatan Maulid dengan makanan khas.', fun:'Hiasan telur & kue warna-warni.', yt:[]},
+  {id:'molontalo-pakaian', title:'Pakaian Adat Gorontalo', province:'gorontalo', region:'Gorontalo', image:'', info:'Busana adat warna cerah untuk hajatan.', fun:'Makna warna menandai strata.', yt:[]},
+  {id:'modutu', title:'Modutu', province:'gorontalo', region:'Gorontalo', image:'', info:'Musyawarah adat sebelum hajatan penting.', fun:'Menentukan tata acara adat.', yt:[]},
+
+  /* SULAWESI TENGAH */
+  {id:'dero', title:'Dero', province:'sulawesi-tengah', region:'Poso, Sulteng', image:'', info:'Tari lingkaran bergandengan tangan.', fun:'Simbol persatuan & sukacita.', yt:[]},
+  {id:'balia', title:'Balia', province:'sulawesi-tengah', region:'Sulteng', image:'', info:'Ritual penyembuhan tradisional dengan mantra & musik.', fun:'Dipandu pawang dengan sesaji.', yt:[]},
+  {id:'mopondo', title:'Mopondo', province:'sulawesi-tengah', region:'Sulteng', image:'', info:'Ritual adat membersihkan kampung dari marabahaya.', fun:'Diikuti seluruh warga.', yt:[]},
+  {id:'vutia', title:'Vutia/Vunja', province:'sulawesi-tengah', region:'Sulteng', image:'', info:'Syukuran panen & doa keselamatan.', fun:'Disertai jamuan bersama.', yt:[]},
+  {id:'momposa', title:'Momposa', province:'sulawesi-tengah', region:'Sulteng', image:'', info:'Upacara pernikahan adat dengan aturan khusus.', fun:'Mengikat dua keluarga besar.', yt:[]},
+
+  /* SULAWESI BARAT */
+  {id:'sayyang-pattudu', title:"Sayyang Pattu'du", province:'sulawesi-barat', region:'Mandar, Sulbar', image:'', info:'Atraksi kuda menari saat khatam Al-Qur’an.', fun:'Kuda dihias meriah.', yt:[]},
+  {id:'sandeq', title:'Lomba Perahu Sandeq', province:'sulawesi-barat', region:'Polewali Mandar', image:'', info:'Balap perahu tradisional tercepat di Nusantara.', fun:'Menjulang ratusan mil di laut.', yt:[]},
+  {id:'massossor-mandar', title:'Massossor Manurung', province:'sulawesi-barat', region:'Mandar', image:'', info:'Ritual pembersihan benda pusaka/kerajaan.', fun:'Dilakukan pada waktu tertentu.', yt:[]},
+  {id:'mappatamma-mandar', title:'Mappatamma', province:'sulawesi-barat', region:'Mandar', image:'', info:'Ritual memasuki rumah baru.', fun:'Doa keselamatan penghuni.', yt:[]},
+  {id:'mappadendang-sulbar', title:'Mappadendang', province:'sulawesi-barat', region:'Sulbar', image:'', info:'Menumbuk padi bersama dengan irama.', fun:'Simbol kebersamaan petani.', yt:[]},
+
+  /* SULAWESI TENGGARA */
+  {id:'lulo', title:'Lulo', province:'sulawesi-tenggara', region:'Sultra', image:'', info:'Tari massal melingkar bergandengan tangan.', fun:'Mudah diikuti semua umur.', yt:[]},
+  {id:'karia-tolaki', title:'Karia/Posuo', province:'sulawesi-tenggara', region:'Tolaki, Sultra', image:'', info:'Ritual menuju kedewasaan bagi remaja putri.', fun:'Pembekalan nilai adat & agama.', yt:[]},
+  {id:'mosehe-butoni', title:'Mosehe', province:'sulawesi-tenggara', region:'Buton', image:'', info:'Upacara pembersihan negeri dari bala.', fun:'Dilakukan bersama pemuka adat.', yt:[]},
+  {id:'kaghati-kolope', title:'Kaghati Kolope', province:'sulawesi-tenggara', region:'Muna', image:'', info:'Layang-layang daun kolope tertua.', fun:'Ada festival menerbangkan massal.', yt:[]},
+  {id:'pekarangan-laut-sultra', title:'Pesta Laut', province:'sulawesi-tenggara', region:'Pesisir Sultra', image:'', info:'Sedekah laut & doa nelayan.', fun:'Perahu hias & hiburan rakyat.', yt:[]},
+
+  /* SULAWESI SELATAN */
+  {id:'rambu-solo', title:"Rambu Solo'", province:'sulawesi-selatan', region:'Toraja, Sulsel', image:'', info:'Upacara kematian besar masyarakat Toraja.', fun:'Diakhiri pemakaman di tebing/batu.', yt:[]},
+  {id:'ma-nene', title:"Ma'nene", province:'sulawesi-selatan', region:'Toraja, Sulsel', image:'', info:'Membersihkan & mengganti pakaian jasad leluhur.', fun:'Momentum bakti keluarga.', yt:[]},
+  {id:'mappacci', title:'Mappacci', province:'sulawesi-selatan', region:'Bugis', image:'', info:'Ritual malam pacci pengantin sebelum akad.', fun:'Mengusap daun pacci sebagai doa.', yt:[]},
+  {id:'tudang-sipulung', title:'Tudang Sipulung', province:'sulawesi-selatan', region:'Sulsel', image:'', info:'Musyawarah duduk bersama masyarakat/nelayan/petani.', fun:'Mengambil mufakat bersama.', yt:[]},
+  {id:'maccera-tasi', title:'Maccera Tasi', province:'sulawesi-selatan', region:'Pesisir Sulsel', image:'', info:'Ritual mensucikan laut & doa nelayan.', fun:'Melarung sesaji & membaca doa.', yt:[]},
+
+  /* MALUKU */
+  {id:'pela-gandong', title:'Pela Gandong', province:'maluku', region:'Maluku', image:'', info:'Ikatan persaudaraan antar negeri (desa) di Maluku.', fun:'Mengikat kewajiban saling bantu.', yt:[]},
+  {id:'cakalele', title:'Cakalele', province:'maluku', region:'Maluku', image:'', info:'Tari perang dengan parang & salawaku.', fun:'Diiringi tifa & terompet.', yt:[]},
+  {id:'sasi-laut', title:'Sasi Laut', province:'maluku', region:'Maluku', image:'', info:'Larangan sementara mengambil hasil laut demi pemulihan.', fun:'Ditandai simbol adat tertentu.', yt:[]},
+  {id:'pukul-sapu', title:'Pukul Sapu', province:'maluku', region:'Morea/Seram', image:'', info:'Tradisi saling pukul punggung saat waktu tertentu.', fun:'Simbol pengorbanan & kebersamaan.', yt:[]},
+  {id:'buka-sasi', title:'Buka Sasi', province:'maluku', region:'Maluku', image:'', info:'Upacara membuka masa panen wilayah sasi.', fun:'Dilanjut syukuran dan pesta rakyat.', yt:[]},
+
+  /* MALUKU UTARA */
+  {id:'soya-soya', title:'Soya-Soya', province:'maluku-utara', region:'Ternate/Tidore', image:'', info:'Tari semangat juang kesultanan masa lampau.', fun:'Gerak tegas dengan pedang kayu.', yt:[]},
+  {id:'barakati', title:'Barakati', province:'maluku-utara', region:'Ternate', image:'', info:'Doa bersama memohon berkah & keselamatan.', fun:'Sering di alun-alun/masjid tua.', yt:[]},
+  {id:'kololi-kie', title:'Kololi Kie', province:'maluku-utara', region:'Tidore', image:'', info:'Mengelilingi gunung (Kie) secara ritual.', fun:'Mengikat identitas orang Tidore.', yt:[]},
+  {id:'paci-lawang', title:'Paci Lawang', province:'maluku-utara', region:'Ternate/Tidore', image:'', info:'Tradisi duel/permainan rakyat dengan rotan.', fun:'Mengasah ketangkasan pemuda.', yt:[]},
+  {id:'fere-kie', title:'Fere Kie', province:'maluku-utara', region:'Malut', image:'', info:'Upacara adat mengitari gunung/kerajaan dalam peringatan tertentu.', fun:'Sarat simbol loyalitas.', yt:[]},
+
+  /* PAPUA */
+  {id:'bakar-batu-papua', title:'Bakar Batu/Barapen', province:'papua', region:'Papua', image:'', info:'Memasak bersama dalam lubang batu panas sebagai syukur.', fun:'Mengumpulkan kerabat satu kampung.', yt:[]},
+  {id:'yospan', title:'Yosim Pancar (Yospan)', province:'papua', region:'Biak & sekitarnya', image:'', info:'Tari pergaulan cepat dengan pola maju-mundur.', fun:'Riang & inklusif.', yt:[]},
+  {id:'wor-biak', title:'Wor (Upacara Adat)', province:'papua', region:'Biak', image:'', info:'Rangkaian ritual adat untuk berbagai hajat.', fun:'Melibatkan nyanyian & tifa.', yt:[]},
+  {id:'noken-papua', title:'Noken (Kearifan Adat)', province:'papua', region:'Pegunungan Papua', image:'', info:'Tas rajut serbaguna simbol kehidupan.', fun:'Warisan Budaya Takbenda UNESCO.', yt:[]},
+  {id:'tifa-papua', title:'Tifa Papua', province:'papua', region:'Papua', image:'', info:'Gendang berlubang satu pengiring tari & ritual.', fun:'Ukiran motif etnik khas.', yt:[]},
+
+  /* PAPUA BARAT */
+  {id:'tifa-arfak', title:'Tifa Arfak', province:'papua-barat', region:'Pegunungan Arfak', image:'', info:'Gendang tabuh khas suku Arfak.', fun:'Motif ukir memperindah badan tifa.', yt:[]},
+  {id:'sasi-laut-raja-ampat', title:'Sasi Laut Raja Ampat', province:'papua-barat', region:'Raja Ampat', image:'', info:'Penutupan/pembukaan zona tangkap demi kelestarian.', fun:'Bukti kearifan bahari Papua Barat.', yt:[]},
+  {id:'tari-badewa', title:'Tari Badewa', province:'papua-barat', region:'Papua Barat', image:'', info:'Tari ritual dalam upacara adat lokal.', fun:'Diiringi tifa & nyanyian.', yt:[]},
+  {id:'upacara-inisiasi-pb', title:'Inisiasi Pemuda', province:'papua-barat', region:'Papua Barat', image:'', info:'Ritual kedewasaan dengan simbol alam.', fun:'Aturan adat ketat dipatuhi.', yt:[]},
+  {id:'pesta-budaya-pb', title:'Pesta Budaya Papua Barat', province:'papua-barat', region:'Kota/kabupaten', image:'', info:'Perayaan tahunan menampilkan tari & musik.', fun:'Ajang promosi kebudayaan daerah.', yt:[]},
+
+  /* PAPUA BARAT DAYA */
+  {id:'yospan-raja-ampat', title:'Yospan Raja Ampat', province:'papua-barat-daya', region:'Raja Ampat', image:'', info:'Varian Yospan populer di wilayah kepulauan.', fun:'Sering tampil di festival bahari.', yt:[]},
+  {id:'sasi-kampung-laut-pbd', title:'Sasi Kampung Laut', province:'papua-barat-daya', region:'PBD', image:'', info:'Larangan tangkap sementara untuk jaga stok ikan.', fun:'Dipatuhi berdasarkan hukum adat.', yt:[]},
+  {id:'barapen-pbd', title:'Barapen Kampung', province:'papua-barat-daya', region:'PBD', image:'', info:'Bakar batu skala kampung untuk syukuran.', fun:'Mengundang seluruh warga.', yt:[]},
+  {id:'tari-suling-tambur', title:'Suling Tambur', province:'papua-barat-daya', region:'Sorong Raya', image:'', info:'Ansambel musik jalan yang mengiringi pawai adat.', fun:'Meriah dan atraktif.', yt:[]},
+  {id:'pesta-laut-pbd', title:'Pesta Laut PBD', province:'papua-barat-daya', region:'Pesisir PBD', image:'', info:'Doa keselamatan nelayan & pelarungan sesaji.', fun:'Diiringi tari & hiburan rakyat.', yt:[]},
+
+  /* PAPUA TENGAH */
+  {id:'musyoh', title:'Musyoh', province:'papua-tengah', region:'Pegunungan Tengah', image:'', info:'Tari/ritual penyucian wilayah dari duka/bala.', fun:'Diiringi tifa & sorak khas.', yt:[]},
+  {id:'bakar-batu-pt', title:'Bakar Batu', province:'papua-tengah', region:'Papua Tengah', image:'', info:'Memasak bersama dalam lubang batu panas.', fun:'Simbol kebersamaan satu honai.', yt:[]},
+  {id:'pesta-babi-pt', title:'Pesta Babi', province:'papua-tengah', region:'Pegunungan', image:'', info:'Jamuan daging babi pada upacara adat.', fun:'Bagian penting ekonomi & budaya.', yt:[]},
+  {id:'wor-pt', title:'Upacara Wor', province:'papua-tengah', region:'Papua Tengah', image:'', info:'Ritual adat untuk berbagai hajat.', fun:'Melibatkan tifa & tarian.', yt:[]},
+  {id:'noken-pt', title:'Noken Adat', province:'papua-tengah', region:'Papua Tengah', image:'', info:'Penggunaan noken dalam transaksi/ritual.', fun:'Lambang kehidupan & harapan.', yt:[]},
+
+  /* PAPUA PEGUNUNGAN */
+  {id:'festival-baliem', title:'Festival Lembah Baliem', province:'papua-pegunungan', region:'Wamena', image:'', info:'Pertunjukan perang-perangan adat & budaya pegunungan.', fun:'Ajang tahunan yang mendunia.', yt:[]},
+  {id:'honai', title:'Mendirikan Honai', province:'papua-pegunungan', region:'Pegunungan', image:'', info:'Rumah panggung bulat khas pegunungan Papua.', fun:'Pusat kehidupan keluarga.', yt:[]},
+  {id:'bakar-batu-pp', title:'Bakar Batu', province:'papua-pegunungan', region:'Pegunungan Papua', image:'', info:'Memasak bersama dalam batu panas pada upacara.', fun:'Mempererat marga & kerabat.', yt:[]},
+  {id:'inisiasi-anak-pp', title:'Inisiasi Anak Laki-laki', province:'papua-pegunungan', region:'Pegunungan', image:'', info:'Ritual kedewasaan menurut aturan suku setempat.', fun:'Nilai keberanian & tanggung jawab.', yt:[]},
+  {id:'weaving-noken-pp', title:'Merajut Noken', province:'papua-pegunungan', region:'Pegunungan', image:'', info:'Pembuatan noken dari serat alami.', fun:'Kegiatan komunal perempuan.', yt:[]},
+
+  /* PAPUA SELATAN */
+  {id:'tari-tobe-asmat', title:'Tari Tobe (Asmat)', province:'papua-selatan', region:'Asmat', image:'', info:'Tari komunal Asmat dengan hentakan kuat.', fun:'Topeng & ukiran kayu khas.', yt:[]},
+  {id:'pesta-ukir-asmat', title:'Pesta Ukir Asmat', province:'papua-selatan', region:'Asmat', image:'', info:'Perayaan seni ukir & pasar budaya.', fun:'Memamerkan mbis & patung Asmat.', yt:[]},
+  {id:'mbis-asmat', title:'Ritual Tiang Mbis', province:'papua-selatan', region:'Asmat', image:'', info:'Pengukuhan tiang leluhur bermotif ukir.', fun:'Sangat sakral dan simbolik.', yt:[]},
+  {id:'barapen-asmat', title:'Barapen Asmat', province:'papua-selatan', region:'Asmat', image:'', info:'Bakar batu skala kampung.', fun:'Mempererat solidaritas marga.', yt:[]},
+  {id:'tari-yospan-merauke', title:'Yospan Merauke', province:'papua-selatan', region:'Merauke', image:'', info:'Varian Yospan di wilayah selatan Papua.', fun:'Riang dan atraktif.', yt:[]},
+];
+
+/* ====== RENDER GRID ====== */
+const grid = document.getElementById('grid');
+const empty = document.getElementById('empty');
+const q = document.getElementById('q');
+const prov = document.getElementById('prov');
+const reset = document.getElementById('reset');
+
+function render(){
+  const text=(q.value||'').toLowerCase().trim();
+  const pv=(prov.value||'').trim();
+
+  const rows = DATA.filter(x=>{
+    const hitText = !text || `${x.title} ${x.region} ${x.info} ${x.fun}`.toLowerCase().includes(text);
+    const hitProv = !pv || x.province===pv;
+    return hitText && hitProv;
+  });
+
+  grid.innerHTML='';
+  rows.forEach(x=>{
+    const card=document.createElement('article'); card.className='card';
+
+    const pic=document.createElement('div'); pic.className='pic';
+    if(x.image) pic.style.backgroundImage=`url('${x.image}')`;
+
+    const body=document.createElement('div'); body.className='body';
+    body.innerHTML=`
+      <h3 class="title">${x.title}</h3>
+      <div class="meta">${x.region}</div>
+      <div class="info">${x.info}</div>
+      <div class="fun"><b>Fun fact:</b> ${x.fun}</div>`;
+
+    const actions=document.createElement('div'); actions.className='actions';
+    const tag=document.createElement('span'); tag.className='chip'; tag.textContent=x.province.replace(/-/g,' ');
+    const btn=document.createElement('button'); btn.className='btn btn-primary'; btn.textContent='Learn more';
+    btn.onclick=()=>openModal(x);
+    actions.appendChild(tag); actions.appendChild(btn);
+
+    card.appendChild(pic); card.appendChild(body); card.appendChild(actions);
+    grid.appendChild(card);
+  });
+
+  empty.style.display = rows.length ? 'none' : 'block';
+}
+q.addEventListener('input',render);
+prov.addEventListener('change',render);
+reset.addEventListener('click',()=>{ q.value=''; prov.value=''; render(); });
+
+/* ====== MODAL ====== */
+const modal=document.getElementById('modal');
+const mThumb=document.getElementById('mThumb');
+const mTitle=document.getElementById('mTitle');
+const mMeta=document.getElementById('mMeta');
+const mBody=document.getElementById('mBody');
+
+function lockBody(lock){
+  document.documentElement.style.overflow = lock ? 'hidden' : '';
+  document.body.style.overflow = lock ? 'hidden' : '';
+}
+
+// --- helper: ambil ID YouTube valid ---
+function extractYTID(str){
+  if(!str) return null;
+  const s = String(str).trim();
+  if(/^[\w-]{11}$/.test(s)) return s; // already ID
+  try{
+    const u = new URL(s);
+    if(u.hostname.includes('youtu.be')) return u.pathname.split('/')[1];
+    if(u.searchParams.has('v')) return u.searchParams.get('v');
+    if(u.pathname.includes('/shorts/')) return u.pathname.split('/shorts/')[1].split('/')[0];
+    if(u.pathname.includes('/embed/')) return u.pathname.split('/embed/')[1].split('/')[0];
+  }catch(e){}
+  return null;
+}
+
+function openModal(x){
+  lockBody(true);
+  mThumb.src = x.image || 'images/logo.png';
+  mThumb.alt = x.title;
+  mTitle.textContent = x.title;
+  mMeta.textContent = x.region;
+
+  // Normalisasi semua kandidat yt -> ID valid
+  const vids = (Array.isArray(x.yt) ? x.yt : [])
+    .map(extractYTID)
+    .filter(Boolean);
+
+  let videoHTML = '';
+  if(vids.length){
+    const first = vids[0];
+    videoHTML = `
+      <div class="video-wrap" style="margin-top:20px">
+        <iframe id="ytFrame" src="https://www.youtube.com/embed/${first}?rel=0&modestbranding=1&playsinline=1"
+          allowfullscreen
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+      </div>
+      ${vids.length>1?`<div class="thumbs">
+        ${vids.map((id,i)=>`<img data-id="${id}" class="${i===0?'active':''}" src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="video ${i+1}">`).join('')}
+      </div>`:''}
+      <div class="muted">Sumber video: YouTube</div>`;
+  }else{
+    const qs = encodeURIComponent(x.title + ' tradisi');
+    videoHTML = `
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed?listType=search&list=${qs}&rel=0&modestbranding=1&playsinline=1"
+          allowfullscreen
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+      </div>
+      <div class="muted">Hasil pencarian YouTube untuk “${x.title}”.</div>`;
+  }
+
+  mBody.innerHTML = `
+    <p style="margin:6px 0">${x.info}</p>
+    <div class="fun"><b>Fun fact:</b> ${x.fun}</div>
+    ${x.image ? `<div style="margin:12px 0;border:1px solid var(--ring);border-radius:12px;overflow:hidden"><img src="${x.image}" alt="${x.title}" style="display:block;width:100%;height:auto"></div>`:''}
+    ${videoHTML}
+  `;
+
+  // Wiring thumbnails -> swap src player
+  const frame = document.getElementById('ytFrame');
+  if(frame){
+    mBody.querySelectorAll('.thumbs img').forEach(img=>{
+      img.addEventListener('click',()=>{
+        const id=img.dataset.id;
+        frame.src=`https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+        mBody.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('active'));
+        img.classList.add('active');
+      });
+    });
+  }
+
+  modal.classList.add('show');
+}
+
+function closeModal(){ modal.classList.remove('show'); lockBody(false); }
+modal.addEventListener('click',e=>{ if(e.target.hasAttribute('data-close')||e.target.classList.contains('backdrop')) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+render();
+</script>
+</body>
+</html>

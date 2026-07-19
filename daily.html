@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KATA — Daily Lokal</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --bg-top:#eaf9d5; --bg-bottom:#b8e3b5;
+      --brand:#0b6b56; --brand-2:#16a085;
+      --ink:#133029; --muted:#5f6f66;
+      --paper:#fff; --ring:#e7ede7;
+      --shadow:0 10px 28px rgba(17,43,33,.18);
+      --radius:16px;
+      --topbar-h:44px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:'Poppins',system-ui,Arial;
+      background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
+      color:var(--ink);
+      transition:padding-top .2s ease;
+    }
+    body.with-topbar{ padding-top: var(--topbar-h); }
+    a{color:inherit;text-decoration:none}
+
+    /* TOPBAR (pengingat 24 jam) */
+    .topbar{
+      position:fixed; top:0; left:0; right:0; height:var(--topbar-h);
+      display:none; align-items:center; justify-content:center; gap:10px; z-index:1000;
+      background:linear-gradient(90deg,var(--brand),var(--brand-2));
+      color:#fff; font-weight:800; box-shadow:0 4px 12px rgba(0,0,0,.12);
+    }
+    .topbar.show{display:flex}
+    .topbar .close{background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer}
+
+ /* Navbar */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+    /* MOBILE NAV */
+    .hamburger{display:none;cursor:pointer;margin-left:auto}
+    .hamburger div{width:24px;height:3px;background:var(--ink);margin:5px 0;transition:.3s}
+    .mobile-nav {
+      display:flex; flex-direction:column; padding:0 16px; gap:12px;
+      max-height:0; overflow:hidden; background:#fff; transition:max-height .4s ease;
+    }
+    .mobile-nav a { padding:12px 0; border-bottom:1px solid #e5efe7; font-weight:600; }
+    .mobile-nav.show { max-height:300px; }
+
+    /* PAGE TITLE */
+    .hero{max-width:1120px;margin:0 auto;padding:40px 16px 12px;text-align:center}
+    .hero h1{margin:0;color:#0b3f33;font-size:36px}
+
+    /* SEARCH */
+    .wrap{max-width:900px;margin:0 auto;padding:0 16px 24px}
+    .search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ring);
+      border-radius:999px;padding:10px 12px;box-shadow:var(--shadow)}
+    .search input{flex:1;border:0;outline:0;font-size:16px}
+    .btn{border:0;border-radius:999px;padding:10px 18px;font-weight:800;cursor:pointer;box-shadow:var(--shadow);transition:.18s}
+    .btn:focus{outline:3px solid #d9f0e8}
+    .btn-primary{background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff}
+    .btn-primary:hover{transform:translateY(-1px) scale(1.02);filter:brightness(1.03)}
+
+    /* RESULT CARD */
+    .card{background:#fff;border:1px solid var(--ring);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    .word-card{max-width:900px;margin:16px auto 0}
+    .word-card h2{margin:0 0 6px;color:#cc5c66;text-align:center}
+    .origin{color:var(--muted);text-align:center;margin-bottom:10px}
+    .def{margin:6px 0}
+
+    /* ACTION BUTTONS */
+    .extra-btns{max-width:900px;margin:14px auto;display:flex;flex-direction:row;gap:12px;padding:0 16px}
+    .extra-btns .btn{background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff;flex:1}
+
+    /* TRACKER */
+    .tracker{max-width:1120px;margin:18px auto;padding:0 16px}
+    .tracker .card{padding:18px}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+    .stat{background:#f6faf7;border:1px solid var(--ring);border-radius:14px;padding:14px;text-align:center}
+    .stat b{font-size:28px;display:block;margin-top:6px}
+
+    .tabs{display:grid;grid-template-columns:1fr 1fr;margin:12px 0;border:1px solid var(--ring);border-radius:10px;overflow:hidden}
+    .tabs button{padding:10px;border:0;background:#eef5f0;color:var(--muted);cursor:pointer}
+    .tabs button.active{background:var(--brand);color:#fff;font-weight:800}
+
+    canvas{max-width:100%}
+    @media (max-width:520px){ .stats{grid-template-columns:1fr} }
+
+    footer {
+  background:linear-gradient(180deg,var(--bg-bottom),#9ed7b1);
+  margin-top:36px;
+  color:#0b3f33;
+}
+footer .wrap {
+  max-width:1120px;
+  margin:0 auto;
+  padding:20px;
+  display:grid;
+  gap:12px;
+  text-align:center;
+}
+footer img {
+  height: 64px;   /* logo kecil rapi */
+  justify-self:center;
+}
+footer h2 {
+  margin:6px 0 0;
+  font-size:20px;
+  font-weight:800;
+}
+footer p {
+  margin:6px 0;
+  font-size:15px;
+}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:768px){
+      .navlinks{display:none}
+      .hamburger{display:block}
+      .hero h1{font-size:26px}
+      .search{border-radius:12px}
+      .stat{background:#1f3b8d;color:#fff}
+      .stat b{color:#fff}
+    }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #0b6b56; color: #fff; padding: 12px 20px; border-radius: 8px;
+      font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+      z-index: 9999;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+  </style>
+</head>
+<body>
+  <!-- TOPBAR (muncul 24 jam) -->
+  <div id="topbar" class="topbar">
+    🔔 Pengingat telah menyala
+    <button class="close" id="closeTopbar" aria-label="Tutup">×</button>
+  </div>
+
+  <!-- NAVBAR -->
+<!-- NAV -->
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+</header>
+      <div class="hamburger" id="ham">
+        <div></div><div></div><div></div>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mnav">
+      <a href="index.html">Home</a>
+      <a class="active" href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </header>
+
+  <!-- TITLE -->
+  <section class="hero"><h1>Daily Lokal</h1></section>
+
+  <!-- SEARCH -->
+  <section class="wrap">
+    <div class="search">
+      <input id="q" type="text" placeholder="Cari kata daerah… (contoh: nderek, punten, suksma)" />
+      <button class="btn btn-primary" id="btnCari">Cari</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="word-card card" style="display:none">
+    <h2 id="r-word">Kata</h2>
+    <div id="r-origin" class="origin">(Asal daerah)</div>
+    <div class="def"><b>Meaning:</b> <span id="r-meaning"></span></div>
+    <div class="def"><b>Example:</b> <span id="r-example"></span></div>
+    <div class="def"><b>Fun Fact:</b> <span id="r-fun"></span></div>
+  </section>
+
+  <!-- ACTION BUTTONS -->
+  <div class="extra-btns">
+    <button class="btn" id="btnNotify">Activate Daily Notifications</button>
+    <button class="btn" id="btnAdd">Add Words</button>
+  </div>
+
+  <!-- TRACKER -->
+  <section class="tracker">
+    <div class="card">
+      <h2 style="margin:0 0 8px">Progress Tracker</h2>
+      <div class="stats">
+        <div class="stat">
+          <div>Word Learned</div>
+          <b id="statWords">0</b>
+        </div>
+        <div class="stat">
+          <div>Time Duration</div>
+          <b id="statTime">0m</b>
+        </div>
+        <div class="toast" id="toast">Menu activated!</div>
+      </div>
+
+      <div class="tabs">
+        <button id="tabWeek" class="active">Week</button>
+        <button id="tabDay">Day</button>
+      </div>
+      <canvas id="chart"></canvas>
+    </div>
+  </section>
+
+  <footer class="reveal">
+    <div class="wrap">
+      <img src="images/logo.png" alt="KATA logo">
+      <h2>KATA</h2>
+      <p>KATA is an interactive platform to preserve Indonesian regional languages ​​in a fun and modern way.</p>
+      <div style="font-size:14px;color:var(--muted)">© 2025 KATA. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <div id="toastGlobal" class="toast">Menu activated!</div>
+
+  <script>
+    /* ========== NAV ========== */
+    const ham = document.getElementById('ham');
+    const mnav = document.getElementById('mnav');
+    ham.onclick = ()=> mnav.classList.toggle('show');
+
+    /* ========== DB KOSAKATA (10 bahasa + fun fact) ========== */
+    const wordsDB = {
+      javanese:[
+        {t:"Nderek",m:"mengikuti",e:"Aku nderek lunga menyang pasar karo ibu.",en:"I followed my mom to the market.",f:"‘Nderek’ lazim dipakai saat mengikuti orang yang dihormati—menunjukkan tata krama Jawa."},
+        {t:"Mangan",m:"makan",e:"Aku lagi mangan sego goreng.",en:"I'm eating fried rice.",f:"Ungkapan ‘mangan ora mangan kumpul’ menekankan kebersamaan."},
+        {t:"Ngombe",m:"minum",e:"Dheweke ngombe banyu adhem.",en:"He drinks cold water.",f:"Jejak Jawa Kuno yang masih hidup di pedesaan."},
+        {t:"Turu",m:"tidur",e:"Adikku lagi turu ing kamar.",en:"My sister is sleeping in the room.",f:"Umum di tingkat tutur Ngoko, nuansa keluarga."},
+        {t:"Kowe",m:"kamu",e:"Kowe wis mangan durung?",en:"Have you eaten yet?",f:"Pronomina akrab (Ngoko) dalam percakapan sehari-hari."},
+        {t:"Aku",m:"saya/aku",e:"Aku ora ngerti maksude.",en:"I don't understand the meaning.",f:"Pasangan sopannya: ‘kula/ingsun’ di tingkat tutur lain."},
+        {t:"Arep",m:"akan/ingin",e:"Aku arep sinau saiki.",en:"I will study now.",f:"‘Arep’ untuk niat dekat; padanan krama ‘badhe’."},
+        {t:"Ngapa",m:"kenapa",e:"Kowe ngapa telat?",en:"Why are you late?",f:"Sering terdengar sebagai ‘ngopo’ di beberapa dialek."},
+        {t:"Ayo",m:"ajak/mari",e:"Ayo padha mulih!",en:"Let's go home!",f:"Cerminan budaya gotong royong Jawa."},
+        {t:"Lali",m:"lupa",e:"Aku lali nggawa buku.",en:"I forgot to bring the book.",f:"Muncul di guyonan ‘wong lali’."},
+        {t:"Cepet",m:"cepat",e:"Cepet mlaku, wis arep ujan.",en:"Walk quickly, it's going to rain.",f:"Bentuk sopannya ‘enggal’."},
+        {t:"Alon-alon",m:"pelan-pelan",e:"Alon-alon wae ben aman.",en:"Slowly, so it's safe.",f:"Slogan populer: ‘Alon-alon asal kelakon’."},
+        {t:"Apik",m:"bagus/baik",e:"Tulisane apik banget.",en:"The writing is very good.",f:"Juga berarti ‘baik hati’ untuk sifat."},
+        {t:"Elek",m:"jelek",e:"Cuacane dina iki elek.",en:"The weather is bad today.",f:"Antonim umum dari ‘apik’."},
+        {t:"Suwun",m:"terima kasih",e:"Matur suwun wis mbantu.",en:"Thank you for helping.",f:"Serumpun dengan krama ‘matur nuwun’."}
+      ],
+      sundanese:[
+        {t:"Punten",m:"permisi",e:"Punten, abdi bade lebet.",en:"Excuse me, I'm coming in.",f:"Ikon kesantunan bahasa Sunda."},
+        {t:"Hatur nuhun",m:"terima kasih",e:"Hatur nuhun kanggo bantosanana.",en:"Thank you for the help.",f:"Setara ‘terima kasih banyak’."},
+        {t:"Dahar",m:"makan",e:"Aranjeunna keur dahar sangu.",en:"They are eating rice.",f:"Ragam halus; percakapan sopan."},
+        {t:"Leueut",m:"minum",e:"Ulah poho leueut cai.",en:"Don't forget to drink water.",f:"Bernuansa lembut; ‘ngaleueut’ = menyeruput."},
+        {t:"Sare",m:"tidur",e:"Adi keur sare di kamar.",en:"Little brother is sleeping in the room.",f:"Kosakata domestik keluarga."},
+        {t:"Abdi",m:"saya",e:"Abdi henteu acan siap.",en:"I'm not ready yet.",f:"Pronomina sopan untuk lawan tutur dihormati."},
+        {t:"Anjeun",m:"kamu",e:"Anjeun di mana ayeuna?",en:"Where are you now?",f:"Sapaan sopan; ‘maneh/sia’ lebih akrab."},
+        {t:"Kumaha",m:"bagaimana",e:"Kumaha damang?",en:"How are you?",f:"Salam khas: ‘Kumaha damang?’."},
+        {t:"Alus",m:"baik/bagus",e:"Ieu hasilna alus.",en:"This result is good.",f:"Juga bermakna ‘halus/indah’."},
+        {t:"Goreng",m:"buruk/jelek",e:"Cuacana goreng keneh.",en:"The weather is still bad.",f:"Kontras dengan ‘alus’."},
+        {t:"Gancang",m:"cepat",e:"Gancang, urang indit!",en:"Quickly, let's go!",f:"Instruksi singkat & tegas."},
+        {t:"Laleuleus",m:"pelan/lembut",e:"Ulah teuing laleuleus.",en:"Don't be too slow/soft.",f:"Nada empatik; bukan sekadar lambat."},
+        {t:"Diuk",m:"duduk",e:"Mangga diuk heula.",en:"Please have a seat.",f:"Kerap digandeng ‘mangga’ (silakan)."},
+        {t:"Indit",m:"pergi",e:"Urang indit ka pasar.",en:"We go to the market.",f:"Rencana singkat harian."},
+        {t:"Kaditu",m:"ke sana",e:"Kirimna kaditu wae.",en:"Just send it there.",f:"‘Ka’ + ‘ditu’ → kaditu."}
+      ],
+      madurese:[
+        {t:"Engghi",m:"iya",e:"Engghi, kaula sapok.",en:"Yes, I agree.",f:"Jawaban sopan khas Madura."},
+        {t:"Tadek",m:"tidak",e:"Tadek, tak adâ waktu.",en:"No, I don't have time.",f:"Negasi umum; cepat: ‘tak’."},
+        {t:"Bede’",m:"ada",e:"Bede’ kabar anyar.",en:"There is some news.",f:"Apostrof = glotal khas Madura."},
+        {t:"Emba’",m:"ibu",e:"Emba’ atella pasar.",en:"Mother went to the market.",f:"Sapaan keluarga inti."},
+        {t:"Lebbhu",m:"lebih",e:"Harga’na lebbhu murah.",en:"The price is cheaper.",f:"Ganda konsonan menandai penekanan."},
+        {t:"Juk",m:"pergi",e:"Sae’ juk ka sekolah.",en:"Let's go to school.",f:"Ajakan santai."},
+        {t:"Ngakan",m:"makan",e:"Dhe’ ngakan sate.",en:"He eats satay.",f:"Ikonik dengan kuliner sate Madura."},
+        {t:"Nyaba",m:"minum",e:"Bâle nyaba aeng.",en:"Please drink water.",f:"‘Aeng’ = air."},
+        {t:"Tosser",m:"cepat",e:"Tosser ka mariyah!",en:"Go quickly there!",f:"Dipakai saat mendesak."},
+        {t:"Bhâgus",m:"bagus",e:"Kerjâna bhâgus.",en:"The work is good.",f:"Serapan Indonesia + fonologi Madura."},
+        {t:"Jâ’",m:"jangan",e:"Jâ’ lopa buku.",en:"Don't forget the book.",f:"Larangan ringan."},
+        {t:"Sala’",m:"salah",e:"Sala’ takèngnghâ.",en:"That's wrong.",f:"Vokal panjang ‘â’ khas."},
+        {t:"Benna",m:"benar",e:"Benna, kaula nyare.",en:"Right, I said it.",f:"Antonim ‘sala’."},
+        {t:"Polè",m:"pulang",e:"Sore polè ka bhâ’na.",en:"Return home in the afternoon.",f:"Aktivitas harian umum."},
+        {t:"Sakancan",m:"teman/kerabat",e:"Sakancan abâ’ pesta.",en:"Relatives have a party.",f:"Ikatan kekerabatan kuat."}
+      ],
+      minangkabau:[
+        {t:"Ambo",m:"saya",e:"Ambo indak tau lupo.",en:"I never forget.",f:"Pronomina Minang populer."},
+        {t:"Ang",m:"kamu",e:"Ang pai ka mano?",en:"Where are you going?",f:"Akrab antar teman."},
+        {t:"Ciek",m:"satu",e:"Ciek piring lagi.",en:"One more plate.",f:"Biasa di warung/pasar."},
+        {t:"Lah",m:"sudah",e:"Urang lah siap.",en:"We are already ready.",f:"Penanda aspek selesai."},
+        {t:"Indak",m:"tidak",e:"Indak bisa kini.",en:"Cannot now.",f:"Varian lisan: ‘ndak’."},
+        {t:"Bana",m:"sangat/benar",e:"Mantap bana masakan ko.",en:"This dish is really good.",f:"Penegas intensitas."},
+        {t:"Gadang",m:"besar",e:"Rumah itu gadang.",en:"That house is big.",f:"Ikon ‘rumah gadang’."},
+        {t:"Ketek",m:"kecil",e:"Anak ketek baraja.",en:"The little child studies.",f:"Diftong khas Minang."},
+        {t:"Baa",m:"bagaimana",e:"Baa kabar ang?",en:"How are you?",f:"Salam perantau."},
+        {t:"Pai",m:"pergi",e:"Ambo pai dahulu.",en:"I'll go first.",f:"Ungkapan pamit ‘duluan’."},
+        {t:"Makan",m:"makan",e:"Urang makan bareh.",en:"We eat rice.",f:"‘Bareh’ = beras/nasi."},
+        {t:"Minum",m:"minum",e:"Minum aia dulu.",en:"Drink water first.",f:"‘Aia’ = air."},
+        {t:"Baraja",m:"belajar",e:"Anak-anak baraja di surau.",en:"Children study at the surau.",f:"Peran surau dalam pendidikan."},
+        {t:"Bagak",m:"berani",e:"Urang tu bagak bana.",en:"That person is very brave.",f:"Citra perantau: gigih & berani."},
+        {t:"Cukuik",m:"cukup",e:"Uangnya cukuik alah.",en:"The money is enough.",f:"Konteks transaksi pasar."}
+      ],
+      batak:[
+        {t:"Horas",m:"salam/selamat",e:"Horas, hita sude!",en:"Hello, everyone!",f:"Salam universal Batak Toba."},
+        {t:"Mauliate",m:"terima kasih",e:"Mauliate do bantuanna.",en:"Thank you for the help.",f:"Sering di upacara adat."},
+        {t:"Dang",m:"tidak",e:"Dang so jadi ro.",en:"I won't come.",f:"Negasi dasar Batak."},
+        {t:"Ise",m:"siapa",e:"Ise namamuna?",en:"What's your name?",f:"Perkenalan ramah."},
+        {t:"Boha",m:"bagaimana",e:"Boha kabarmu?",en:"How are you?",f:"Tanya kabar umum."},
+        {t:"Ro",m:"datang",e:"Ia ro tu jabu.",en:"He comes home.",f:"‘Jabu’ = rumah."},
+        {t:"Mangan",m:"makan",e:"Hita mangan dope.",en:"Let's eat first.",f:"Serumpun Jawa ‘mangan’."},
+        {t:"Minum",m:"minum",e:"Minum do aekna.",en:"Drink the water.",f:"‘Aek’ = air."},
+        {t:"Modom",m:"tidur",e:"Anak i modom di jabu.",en:"The child sleeps at home.",f:"Kosakata domestik."},
+        {t:"Ingot",m:"ingat",e:"Ingot ma tugasmu.",en:"Remember your task.",f:"Awal petuah: ‘Ingot ma…’"},
+        {t:"Rap",m:"bersama",e:"Hita rap mangaranto.",en:"We travel together.",f:"Nilai kebersamaan adat."},
+        {t:"Sude",m:"semua",e:"Sude na jala ro.",en:"Everyone also comes.",f:"Penegas dalam pidato."},
+        {t:"Hape",m:"tetapi",e:"I dohot ho hape.",en:"But me and you.",f:"Konektor kontras umum."},
+        {t:"Hasian",m:"sayang",e:"Hasian, hita marsogot.",en:"Dear, we are late.",f:"Sapaan mesra keluarga."},
+        {t:"Marsak",m:"rusak/sedih",e:"Ati na marsak do.",en:"(He) is sad.",f:"Bisa benda/emosi."}
+      ],
+      betawi:[
+        {t:"Gue",m:"saya",e:"Gue udah nunggu lama.",en:"I've been waiting long.",f:"Ikon gaul Jakarta."},
+        {t:"Lu",m:"kamu",e:"Lu lagi di mana?",en:"Where are you?",f:"Pasangan ‘gue–lu’."},
+        {t:"Kagak",m:"tidak",e:"Kagak bisa sekarang.",en:"Can't do it now.",f:"Negasi khas Betawi."},
+        {t:"Banget/Beud",m:"sangat",e:"Enak beud nih!",en:"This is so delicious!",f:"‘Beud’ = hipergaul."},
+        {t:"Emang",m:"memang",e:"Emang bener begitu.",en:"That's indeed true.",f:"Partikel diskursif."},
+        {t:"Abang",m:"sapaan laki-laki",e:"Abang, minta tolong dong.",en:"Bro, please help.",f:"Juga ‘kakak laki-laki’."},
+        {t:"Nyok",m:"ayo/mari",e:"Nyok, cabut!",en:"Come on, let's go!",f:"Ajak spontan nongkrong."},
+        {t:"Becus",m:"piawai",e:"Dia becus urusan itu.",en:"He is good at that.",f:"Serapan; etimologi diperdebatkan."},
+        {t:"Cing",m:"hei/tolong",e:"Cing, liatin sini.",en:"Hey, look here.",f:"Memancing perhatian."},
+        {t:"Bete",m:"kesal",e:"Gue bete nungguin.",en:"I'm annoyed waiting.",f:"Gaul 2000-an yang awet."},
+        {t:"Ngapa",m:"kenapa",e:"Ngapa sih ribut?",en:"Why so noisy?",f:"Varian ‘ngapah’."},
+        {t:"Nih",m:"ini",e:"Nih, buat lu.",en:"Here, for you.",f:"Saat menyerahkan barang."},
+        {t:"Kere",m:"miskin (slang)",e:"Dia lagi kere.",en:"He's broke.",f:"Istilah gaul informal."},
+        {t:"Cupu",m:"payah",e:"Mainnya cupu amat.",en:"So noob!",f:"Sering dipakai di gaming."},
+        {t:"Oga",m:"tidak mau",e:"Gue oga ikut.",en:"I don't want to join.",f:"Penolakan santai."}
+      ],
+      buginese:[
+        {t:"Iyye",m:"iya",e:"Iyye, nasaba makkita.",en:"Yes, I see.",f:"Afirmasi sopan."},
+        {t:"Teddeng",m:"tidak",e:"Teddeng ku gau.",en:"I won't do it.",f:"Negasi tegas."},
+        {t:"Mange",m:"datang",e:"Ia mange ri bola.",en:"He comes home.",f:"‘Bola’ = rumah Bugis."},
+        {t:"Melo",m:"ingin",e:"Melo ku belajaré.",en:"I want to study.",f:"Ekspresi niat ringan."},
+        {t:"Iya’",m:"kamu",e:"Iya’ di mana?",en:"Where are you?",f:"Glotal khas Sulsel."},
+        {t:"Ugi",m:"saya",e:"Ugi tena siap.",en:"I'm not ready.",f:"Nama etnonim: To Ugi."},
+        {t:"Manganre",m:"makan",e:"Kita manganre ulu kana.",en:"We eat first.",f:"Serumpun ‘makan/mangan’."},
+        {t:"Minnu",m:"minum",e:"Minna’ aeré.",en:"Drink water.",f:"‘Aeré’ = air."},
+        {t:"Matinro",m:"tidur",e:"Anak matinro ri lónré.",en:"The child sleeps in the room.",f:"Umum untuk anak kecil."},
+        {t:"Aja",m:"jangan",e:"Aja mappoji!",en:"Don't lie!",f:"Larangan tegas."},
+        {t:"Ma’gassing",m:"kuat/sehat",e:"Badanna ma’gassing.",en:"His body is strong.",f:"Konsep ‘gassing’ = bugar."},
+        {t:"Lambusu",m:"jujur",e:"Ia lambusu tellu.",en:"He is very honest.",f:"Nilai utama Bugis."},
+        {t:"Bicara",m:"bicara",e:"Bicara ma’gaga.",en:"Speak loudly.",f:"‘Ma’gaga’ = keras."},
+        {t:"Sappo",m:"pagar",e:"Sappo bola na tinggi.",en:"The house fence is high.",f:"Halaman berpagar khas arsitektur."},
+        {t:"Sio",m:"sembilan",e:"Ana’na sio.",en:"He has nine children.",f:"Angka penting pada ritual tertentu."}
+      ],
+      banjar:[
+        {t:"Ulun",m:"saya",e:"Ulun kada paham.",en:"I don't understand.",f:"Pronomina khas Banjar."},
+        {t:"Ikam",m:"kamu",e:"Ikam handak kamana?",en:"Where are you going?",f:"Akrab; ‘pian’ lebih sopan."},
+        {t:"Handak",m:"ingin/mahu",e:"Ulun handak makan soto.",en:"I want to eat soto.",f:"Keinginan spontan."},
+        {t:"Lawas",m:"lama",e:"Ulun menunggu lawas jua.",en:"I've waited a long time.",f:"Juga bermakna ‘tua’ (benda)."},
+        {t:"Bedabah",m:"berantakan",e:"Kamarku bedabah pian.",en:"My room is messy.",f:"Sehari-hari di rumah."},
+        {t:"Bubuhan",m:"kelompok/teman",e:"Bubuhan kami datang.",en:"Our group came.",f:"Keakraban komunitas Banjar."},
+        {t:"Kada",m:"tidak",e:"Kada jadi malam ini.",en:"Not happening tonight.",f:"Negasi khas; lugas."},
+        {t:"Bisi",m:"ada/tersedia",e:"Di warung bisi jua.",en:"It's available at the stall.",f:"Bahasa transaksi pasar."},
+        {t:"Mangan",m:"makan",e:"Ulun mangan dulu.",en:"I'll eat first.",f:"Serumpun ‘makan/mangan’."},
+        {t:"Minum",m:"minum",e:"Minum haja, panas.",en:"Just drink, it's hot.",f:"‘Haja’ = saja (dialek)."},
+        {t:"Pian",m:"Anda (sopan)",e:"Pian asal dimana?",en:"Where are you from?",f:"Sapaan sopan untuk orang baru."},
+        {t:"Tabarakan",m:"bertemu",e:"Kita tabarakan di pasar.",en:"We meet at the market.",f:"Dari akar ‘barak’ = bertemu."},
+        {t:"Gasak",m:"pukul",e:"Jangan digasak barangnya.",en:"Don't hit the item.",f:"Instruksi tegas informal."},
+        {t:"Kaya",m:"seperti",e:"Suara kaya hujan.",en:"Sounds like rain.",f:"Jangan bingung dgn ‘kaya = rich’."},
+        {t:"Sungai",m:"sungai",e:"Kada jauh lawan sungai.",en:"Not far from the river.",f:"Toponimi Kalimantan identik sungai."}
+      ],
+      acehnese:[
+        {t:"Lôn",m:"saya",e:"Lôn hana meupeu na.",en:"I don't have it.",f:"Vokal ‘ô’ khas Aceh."},
+        {t:"Gata",m:"kamu",e:"Gata jak u lon?",en:"Will you come to me?",f:"Akrab; ‘droeneuh’ lebih sopan."},
+        {t:"Peue",m:"apa",e:"Peue that masalah nyoe?",en:"What is this problem?",f:"Kata tanya inti."},
+        {t:"Jak",m:"pergi",e:"Ureung nyan jak keu pasar.",en:"That person goes to the market.",f:"Sering diimbuhi arah ‘u’ (ke)."},
+        {t:"Nyoe",m:"ini",e:"Nyoe buku barô.",en:"This is a new book.",f:"Pasangan ‘nyan’ (= itu)."},
+        {t:"That",m:"sangat",e:"Meunye that raseuki nyan.",en:"That's very good fortune.",f:"Penegas intensitas."},
+        {t:"Teuma",m:"datang",e:"Gata teuma u gampông.",en:"You came to the village.",f:"‘Gampông’ = kampung."},
+        {t:"Peugah",m:"bilang",e:"Peugah le nyan keu lon.",en:"Tell me that again.",f:"Serumpun ‘ujar’ Melayu."},
+        {t:"Jih",m:"dia",e:"Jih hana di rumoh.",en:"He isn't at home.",f:"Pronoun netral gender."},
+        {t:"Beuna",m:"benar",e:"Beuna that jawaban gata.",en:"Your answer is very correct.",f:"Umum di majelis ilmu."},
+        {t:"Teuma u",m:"datang ke",e:"Teuma u sekolah pagi.",en:"Come to school in the morning.",f:"Konstruksi preposisional produktif."},
+        {t:"Peugoet",m:"ambil",e:"Peugoet kitab nyoe.",en:"Take this book.",f:"Instruksi guru/ortu."},
+        {t:"Meupiyôh",m:"mencuci",e:"Nyan meupiyôh baju.",en:"She is washing clothes.",f:"Akhiran ‘-ôh’ khas bunyi."},
+        {t:"Seunalôn",m:"teman",e:"Seunalôn lon beu ka.",en:"My friend is coming.",f:"Jejaring kawan penting."},
+        {t:"Leumah",m:"rumah",e:"Leumah lôn hana jauh.",en:"My house isn't far.",f:"Serumpun ‘rumoh’; variasi dialek."}
+      ],
+      balinese:[
+        {t:"Tiang",m:"saya",e:"Tiang suba rauh.",en:"I have arrived.",f:"Pronomina sopan; varian ‘tityang’."},
+        {t:"Ragané",m:"kamu",e:"Ragané kenken kabaré?",en:"How are you?",f:"Sapaan akrab beradab."},
+        {t:"Suksma",m:"terima kasih",e:"Suksma sampun ngrewangi.",en:"Thank you for helping.",f:"Ungkapan syukur umum di Bali."},
+        {t:"Napi",m:"apa",e:"Napi sane kedados?",en:"What happened?",f:"Kata tanya di rumah & upacara."},
+        {t:"Ngiring",m:"silakan/mari",e:"Ngiring medahar raris.",en:"Please eat first.",f:"Mempersilakan tamu."},
+        {t:"Ngajeng",m:"makan",e:"Dane ngajeng nasi campur.",en:"He eats mixed rice.",f:"‘Ajengan’ = makanan (asal kata)."},
+        {t:"Nginum",m:"minum",e:"Nginum toya anget.",en:"Drink warm water.",f:"‘Toya’ = air (Sanskrit pengaruh)."},
+        {t:"Mesare",m:"tidur",e:"Anak alit mesare.",en:"The child is sleeping.",f:"‘Alit’ = kecil; konteks keluarga."},
+        {t:"Suba",m:"sudah",e:"Suba prasida.",en:"It's already possible.",f:"Penanda selesai/siap."},
+        {t:"Durus",m:"cepat",e:"Durus pesan teka.",en:"Come quickly.",f:"Sering di protokol upacara."},
+        {t:"Alon",m:"pelan",e:"Lakar alon-alon",en:"Go slowly.",f:"Sikap hati-hati saat prosesi."},
+        {t:"Becik",m:"baik",e:"Ipun becik aturanné.",en:"His manners are good.",f:"Etika/tatakrama dijunjung tinggi."},
+        {t:"Leuwih",m:"lebih",e:"Wenten langkung leuwih?",en:"Is there any more?",f:"‘Wenten’ = ada; bentuk sopan."},
+        {t:"Tityang",m:"saya (var.)",e:"Tityang mrasidayang.",en:"I can do it.",f:"Ragam sangat sopan."},
+        {t:"Ajengan",m:"makanan",e:"Ajengan nenten mawasta.",en:"The food has no name.",f:"Istilah kuliner penting."}
+      ]
+    };
+
+    const LANG_META={
+      javanese:{name:"Jawa"}, sundanese:{name:"Sunda"}, madurese:{name:"Madura"},
+      minangkabau:{name:"Minangkabau"}, batak:{name:"Batak Toba"}, betawi:{name:"Betawi"},
+      buginese:{name:"Bugis"}, banjar:{name:"Banjar"}, acehnese:{name:"Aceh"}, balinese:{name:"Bali"}
+    };
+
+    /* ==== Index untuk pencarian cepat ==== */
+    const index = {};
+    Object.keys(wordsDB).forEach(lang=>{
+      wordsDB[lang].forEach(w=>{
+        const k=w.t.toLowerCase();
+        (index[k]||(index[k]=[])).push({lang,w});
+      });
+    });
+
+    /* ========== SEARCH / RENDER ========== */
+    const q = document.getElementById('q');
+    const btnCari = document.getElementById('btnCari');
+    const res = {
+      wrap: document.getElementById('result'),
+      word: document.getElementById('r-word'),
+      origin: document.getElementById('r-origin'),
+      meaning: document.getElementById('r-meaning'),
+      ex: document.getElementById('r-example'),
+      fun: document.getElementById('r-fun')
+    };
+    let lastShown = null; // {lang, w}
+
+    function pickBest(query){
+      const k=query.trim().toLowerCase();
+      if(!k) return null;
+      if(index[k]) return index[k][0]; // exact match
+      // contains fallback
+      for(const lang of Object.keys(wordsDB)){
+        const hit = wordsDB[lang].find(w =>
+          w.t.toLowerCase().includes(k) ||
+          w.m.toLowerCase().includes(k) ||
+          (w.e && w.e.toLowerCase().includes(k)) ||
+          (w.f && w.f.toLowerCase().includes(k))
+        );
+        if(hit) return {lang,w:hit};
+      }
+      return null;
+    }
+    function renderHit(hit){
+      if(!hit) return false;
+      lastShown = hit;
+      const {lang,w}=hit;
+      res.word.textContent = `“${w.t}”`;
+      res.origin.textContent = `(${LANG_META[lang].name})`;
+      res.meaning.textContent = w.m;
+      res.ex.textContent = w.e ? `${w.e}${w.en?` — ${w.en}`:""}` : "-";
+      res.fun.textContent = w.f || "-";
+      res.wrap.style.display = 'block';
+      return true;
+    }
+    function showWord(query){
+      const ok = renderHit(pickBest(query));
+      if(!ok) alert('Kata tidak ditemukan.');
+    }
+
+    btnCari.onclick = ()=> showWord(q.value);
+    q.addEventListener('keydown', e=>{ if(e.key==='Enter') showWord(q.value); });
+
+    /* ========== TRACKER (Saved Words) ========== */
+    const SAVED_KEY = 'kata_saved_words_v1';
+    function getSaved(){
+      try{ return JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); }catch{ return []; }
+    }
+    function setSaved(arr){
+      localStorage.setItem(SAVED_KEY, JSON.stringify(arr));
+      updateTracker();
+      recalcChart(); // << update grafik otomatis
+    }
+    function updateTracker(){
+      const saved = getSaved();
+      document.getElementById('statWords').textContent = saved.length;
+      const minutes = saved.length * 5;
+      document.getElementById('statTime').textContent = `${Math.floor(minutes/60)}h ${minutes%60}m`;
+    }
+
+    // Add Words: kalau user baru mengetik kata lain tapi belum tekan Enter,
+    // kita otomatis cari & render dulu, baru simpan.
+    const btnAdd = document.getElementById('btnAdd');
+    btnAdd.onclick = ()=>{
+      let hit = lastShown;
+      const typed = q.value.trim();
+      if(typed && (!hit || typed.toLowerCase() !== hit.w.t.toLowerCase())){
+        hit = pickBest(typed);
+        if(hit) renderHit(hit);
+      }
+      if(!hit){ showToast('Cari kata dulu ya 🙂'); return; }
+      const saved = getSaved();
+      const key = `${hit.lang}:${hit.w.t.toLowerCase()}`;
+      if(saved.find(s=>s.key===key)){ showToast('Kata sudah tersimpan'); return; }
+      saved.push({key, lang:hit.lang, t:hit.w.t, at:Date.now()});
+      setSaved(saved);
+      showToast('Kata ditambahkan ke tracker ✔');
+    };
+
+    /* ========== PENGINGAT 24 JAM (Topbar) ========== */
+    const NOTIF_KEY = 'kata_notify_until';
+    const topbar = document.getElementById('topbar');
+    const closeTopbar = document.getElementById('closeTopbar');
+    function ensureTopbar(){
+      const until = parseInt(localStorage.getItem(NOTIF_KEY)||'0',10);
+      if(until > Date.now()){
+        topbar.classList.add('show'); document.body.classList.add('with-topbar');
+      }else{
+        topbar.classList.remove('show'); document.body.classList.remove('with-topbar');
+        if(until) localStorage.removeItem(NOTIF_KEY);
+      }
+    }
+    ensureTopbar();
+    closeTopbar.onclick = ()=>{ localStorage.removeItem(NOTIF_KEY); ensureTopbar(); };
+    document.getElementById('btnNotify').onclick = ()=>{
+      const until = Date.now() + 24*60*60*1000; // 24 jam
+      localStorage.setItem(NOTIF_KEY, String(until));
+      ensureTopbar();
+      showToast('Pengingat telah menyala (24 jam)');
+    };
+    setInterval(ensureTopbar, 60000); // auto-expire
+
+    /* ========== CHART ========== */
+    const ctx = document.getElementById('chart');
+    const week = { labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], data:[0,0,0,0,0,0,0] };
+    const day  = { labels:['08:00','10:00','12:00','14:00','16:00','18:00'], data:[0,0,0,0,0,0] };
+    let chart = new Chart(ctx,{
+      type:'line',
+      data:{
+        labels: week.labels,
+        datasets:[{
+          data: week.data,
+          borderColor:'#0b6b56',
+          backgroundColor:'rgba(11,107,86,0.12)',
+          fill:true, tension:.35, pointRadius:3
+        }]
+      },
+      options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+    });
+    const tabWeek = document.getElementById('tabWeek');
+    const tabDay  = document.getElementById('tabDay');
+    tabWeek.onclick = ()=>{tabWeek.classList.add('active'); tabDay.classList.remove('active');
+      chart.data.labels = week.labels; chart.data.datasets[0].data = week.data; chart.update();}
+    tabDay.onclick = ()=>{tabDay.classList.add('active'); tabWeek.classList.remove('active');
+      chart.data.labels = day.labels; chart.data.datasets[0].data = day.data; chart.update();}
+
+    // Hitung ulang grafik dari data tersimpan
+    function startOfDay(d){const x=new Date(d); x.setHours(0,0,0,0); return x;}
+    function startOfWeek(d){const x=startOfDay(d); const day=x.getDay(); const diff=(day+6)%7; x.setDate(x.getDate()-diff); return x;}
+    function recalcChart(){
+      const saved=getSaved();
+      // WEEK: akumulasi minggu berjalan (Mon..Sun)
+      const ws=startOfWeek(new Date());
+      week.data=[0,0,0,0,0,0,0];
+      saved.forEach(s=>{
+        const ds=startOfDay(new Date(s.at));
+        if(ds>=ws){
+          const idx=(ds.getDay()+6)%7; // Mon=0..Sun=6
+          week.data[idx] += 1;
+        }
+      });
+      // DAY: akumulasi hari ini pada 6 slot (08,10,12,14,16,18)
+      const today=startOfDay(new Date());
+      day.data=[0,0,0,0,0,0];
+      saved.forEach(s=>{
+        const d=new Date(s.at);
+        if(startOfDay(d).getTime()===today.getTime()){
+          const h=d.getHours();
+          // 6 slot: <10, <12, <14, <16, <18, >=18
+          const idx = h<10?0 : h<12?1 : h<14?2 : h<16?3 : h<18?4 : 5;
+          day.data[idx] += 1;
+        }
+      });
+      // refresh dataset sesuai tab aktif
+      if(tabWeek.classList.contains('active')){
+        chart.data.labels=week.labels; chart.data.datasets[0].data=week.data;
+      }else{
+        chart.data.labels=day.labels; chart.data.datasets[0].data=day.data;
+      }
+      chart.update();
+    }
+    updateTracker();
+    recalcChart();
+
+    /* ========== Toast util ========== */
+    function showToast(msg){
+      const t=document.getElementById("toastGlobal");
+      t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2000);
+    }
+    document.querySelectorAll(".navlinks a").forEach(link=>{
+      link.addEventListener("click",()=>showToast(`You clicked: ${link.textContent}`));
+    });
+  </script>
+</body>
+</html>

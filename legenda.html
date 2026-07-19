@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KATA — LegendaQu</title>
+<style>
+  :root {
+    --bg-top: #eaf9d5;
+    --bg-bottom: #b8e3b5;
+    --brand: #0b6b56;
+    --brand-2: #16a085;
+    --ink: #133029;
+    --muted: #5f6f66;
+    --paper: #fff;
+    --ring: #e7ede7;
+    --shadow: 0 10px 28px rgba(17,43,33,.18);
+    --gold:#ffcc66;
+  }
+
+  /* Base */
+  *{ box-sizing:border-box }
+  body{
+    margin:0; font-family:'Poppins',system-ui,Arial;
+    background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
+    color:var(--ink)
+  }
+  a{ color:inherit; text-decoration:none }
+
+  /* ===== NAVBAR (desktop seperti contoh) ===== */
+  /* Navbar */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid #e5efe7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo img{height:40px}
+.navlinks{display:flex;gap:16px}
+.navlinks a{font-weight:600;position:relative}
+.navlinks a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transform:scaleX(0);transform-origin:left;transition:.25s}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-toggle{display:none;cursor:pointer;font-size:24px;background:none;border:0;color:#0b3f33;margin-left:auto}
+@media(max-width:768px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:60px;right:20px;left:20px;background:#fff;flex-direction:column;gap:14px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transition:max-height .35s ease,opacity .35s ease}
+  .navlinks.show{display:flex;max-height:400px;opacity:1}
+}
+
+  /* ===== NAVBAR MOBILE (tetap) ===== */
+  .hamburger{ display:none; cursor:pointer; margin-left:auto }
+  .hamburger div{ width:24px; height:3px; background:var(--ink); margin:5px 0; transition:.3s }
+  .mobile-nav{
+    display:flex; flex-direction:column; padding:0 16px; gap:12px;
+    max-height:0; overflow:hidden; background:#fff; transition:max-height .4s ease;
+    border-bottom:1px solid #e5efe7;
+  }
+  .mobile-nav a{ padding:12px 0; border-bottom:1px solid #e5efe7; font-weight:600 }
+  .mobile-nav a:last-child{ border-bottom:0 }
+  .mobile-nav.show{ max-height:300px }
+
+  @media (max-width:820px){
+    .navlinks{ display:none }
+    .hamburger{ display:block }
+  }
+
+  /* ===== CONTENT ===== */
+  .section{ max-width:1120px; margin:0 auto; padding:20px 16px }
+  .paper{ background:var(--paper); border:1px solid var(--ring); border-radius:16px; box-shadow:var(--shadow); padding:16px }
+
+  /* Cards */
+  .grid{ display:grid; gap:14px }
+  .card{ display:flex; gap:12px; align-items:center; border:1px solid var(--ring); border-radius:14px; padding:10px; background:#fff }
+  .thumb{ width:76px; height:76px; flex:0 0 76px; border-radius:12px; object-fit:cover; border:1px solid #eaeaea }
+  .title{ font-weight:800 }
+  .subtitle{ font-size:12px; color:var(--muted) }
+  .grow{ flex:1 }
+  .btn{ padding:10px 16px; border-radius:999px; border:0; cursor:pointer; font-weight:700; box-shadow:var(--shadow); transition:.2s }
+  .btn-primary{ background:var(--brand); color:#fff }
+  .btn:hover{ transform:translateY(-1px) }
+
+  /* ===== QUIZ ===== */
+  .mini-quiz{ background:#fff; border:1px solid var(--ring); border-radius:14px; padding:16px; margin-top:16px }
+  .quiz-top{ display:flex; justify-content:space-between; align-items:center; gap:8px }
+  .score-pill{ background:#ff4d4f; color:#fff; border-radius:999px; padding:6px 10px; font-weight:700 }
+  .progress{ height:8px; background:#eef5ef; border-radius:999px; overflow:hidden; margin-top:8px }
+  .progress>span{ display:block; height:100%; background:linear-gradient(90deg,var(--brand),var(--brand-2)); width:0% }
+  .qtitle{ font-weight:800; margin:10px 0 8px }
+  .choices{ display:grid; gap:8px }
+  .choice{ border:1px solid #ffd9a5; background:#fff7e6; color:#8a5a13; border-radius:10px; padding:10px 12px; cursor:pointer; text-align:left }
+  .choice.picked{ background:#e9fbef; border-color:#b8f2c9; color:#134b35 } /* tanda tersimpan */
+  .navq{ display:flex; gap:8px; align-items:center; justify-content:space-between; margin-top:12px; flex-wrap:wrap }
+  .submit{ background:var(--gold); color:#5c4107; border:0; border-radius:999px; padding:10px 16px; font-weight:700; cursor:pointer }
+
+  /* Soal bergambar: gambar kiri, teks kanan */
+  .qrow{
+    display:grid;
+    grid-template-columns: 180px 1fr;
+    gap:12px;
+    align-items:start;
+    margin:8px 0;
+  }
+  .qthumb{
+    width:180px; height:130px;
+    object-fit:cover;
+    border-radius:10px;
+    border:1px solid #eee;
+  }
+  @media (max-width:640px){
+    .qrow{ grid-template-columns: 1fr; }
+    .qthumb{ width:100%; height:160px; }
+  }
+
+  /* Modal hasil */
+  .modal{ position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.35); padding:16px }
+  .modal.show{ display:grid }
+  .panel{ background:#fff; border-radius:16px; max-width:820px; width:100%; box-shadow:var(--shadow); border:1px solid var(--ring); }
+  .panel header{ position:relative; background:#f8fbf8; border-bottom:1px solid var(--ring); }
+  .panel .ph{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px }
+  .tag{ display:inline-block; padding:6px 12px; border-radius:999px; font-weight:800; font-size:14px; }
+  .tag.ok{ background:#e6fcf5; color:#087f5b; border:1px solid #c3fae8 }
+  .tag.warn{ background:#fff3bf; color:#8a5a13; border:1px solid #ffe066 }
+  .tag.bad{ background:#ffe3e3; color:#c92a2a; border:1px solid #ffa8a8 }
+  .panel .body{ padding:12px 16px; max-height:60vh; overflow:auto }
+  .row{ border:1px solid var(--ring); border-radius:12px; padding:10px 12px; margin:8px 0; display:grid; gap:6px; background:#fff }
+  .row.good{ border-color:#b2f2bb; background:#f6fff7 }
+  .row.fail{ border-color:#ffa8a8; background:#fff6f6 }
+  .small{ font-size:12px; color:var(--muted) }
+  .okbtn{ background:var(--brand); color:#fff; border:0; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer }
+
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <div class="nav">
+    <div class="logo"><img src="images/logo.png" alt="KATA logo"><b>KATA</b></div>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="daily.html">Daily Lokal</a>
+      <a href="bumi.html">Bumi Words</a>
+      <a href="legenda.html">LegendaQu</a>
+      <a href="auth.html">Account</a>
+    </div>
+  </div>
+</header>
+
+  <!-- mobile menu -->
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="daily.html">Daily Lokal</a>
+    <a href="bumi.html">Bumi Words</a>
+    <a href="legenda.html">LegendaQu</a>
+    <a href="auth.html">Account</a>
+  </nav>
+</header>
+
+<!-- ===== CONTENT ===== -->
+<section class="section">
+  <h2 style="margin:0 0 12px">LegendaQu</h2>
+
+  <!-- List legenda -->
+  <div class="paper">
+    <div class="grid" id="storyList"></div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="miniQuiz" class="mini-quiz">
+    <div class="quiz-top">
+      <h3 style="margin:0">Mini Quiz</h3>
+      <div class="score-pill">Score: <span id="score">0</span>/100</div>
+    </div>
+    <div class="progress"><span id="bar"></span></div>
+    <div id="qbox"></div>
+    <div class="navq">
+      <button class="btn btn-primary" id="prevBtn">◀ Previous</button>
+      <span id="counter" style="font-weight:800"></span>
+      <button class="btn btn-primary" id="nextBtn">Next ▶</button>
+      <button class="submit" id="submitBtn" style="display:none">Submit</button>
+    </div>
+  </div>
+</section>
+
+<!-- Modal hasil -->
+<div class="modal" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resTitle">
+  <div class="panel">
+    <header>
+      <div class="ph">
+        <div>
+          <div id="resTitle" style="font-weight:800;font-size:18px">Hasil Quiz</div>
+          <div class="small" id="resSubtitle"></div>
+        </div>
+        <div id="resTag" class="tag">Score</div>
+      </div>
+    </header>
+    <div class="body">
+      <div id="resList"></div>
+    </div>
+    <div style="padding:12px 16px;border-top:1px solid var(--ring);display:flex;justify-content:flex-end">
+      <button class="okbtn" id="resOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<footer class="section" style="text-align:center;padding-top:0">
+  <img src="images/logo.png" alt="KATA logo" style="height:60px"><br>
+  <b style="font-size:20px">KATA</b>
+  <p style="max-width:600px;margin:8px auto 0">KATA is an interactive platform to preserve Indonesian regional languages ​​in a fun and modern way.</p>
+  <div style="font-size:14px;color:var(--muted);margin-top:6px">© 2025 KATA. All rights reserved.</div>
+</footer>
+
+<script>
+  /* NAVBAR MOBILE */
+  const navToggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  function closeMobile(){ mobileNav.classList.remove('show'); navToggle.setAttribute('aria-expanded','false'); }
+  navToggle?.addEventListener('click', ()=>{
+    const open = !mobileNav.classList.contains('show');
+    mobileNav.classList.toggle('show', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+  });
+  mobileNav.addEventListener('click', e=>{ if(e.target.tagName==='A') closeMobile(); });
+  window.addEventListener('resize', ()=>{ if(window.innerWidth>820) closeMobile(); });
+  document.addEventListener('click', (e)=>{
+    if(window.innerWidth>820) return;
+    if(!mobileNav.contains(e.target) && !navToggle.contains(e.target)) closeMobile();
+  });
+
+  //LIST CERITA (dengan foto) -> story.html //
+  const STORIES = [
+    { id:'malin',  title:'Malin Kundang',  youtube:'IQW64q5-lNE', thumb:'malin kundang.jpg', region:'Sumatera Barat' },
+    { id:'sangkuriang', title:'Sangkuriang', youtube:'X6IrY6aHGXo', thumb:'sangkuriang.jpg', region:'Jawa Barat' },
+    { id:'timun',  title:'Timun Mas',      youtube:'juEC_Q-j9Tw', thumb:'Timun Mas.jpg', region:'Jawa Tengah' },
+    { id:'roro',   title:'Roro Jonggrang', youtube:'N5VQYcmEBwk', thumb:'Roro Jongrang.jpg',     region:'Yogyakarta' },
+    { id:'tangkuban', title:'Keong Mas', youtube:'14xZV-jEnY0', thumb:'keong.jpg', region:'Jawa Timur' }
+  ];
+  document.getElementById('storyList').innerHTML = STORIES.map(s=>`
+    <article class="card">
+      <img class="thumb" loading="lazy" src="${s.thumb}" alt="${s.title}">
+      <div class="grow">
+        <div class="title">${s.title}</div>
+        <div class="subtitle">${s.region}</div>
+      </div>
+      <a class="btn btn-primary" href="story.html?id=${encodeURIComponent(s.id)}">Buka</a>
+    </article>
+  `).join('');
+
+  /* QUIZ (10 teks + 5 bergambar) */
+  const QUESTIONS = [
+    {q:'Apa arti kata "apik" dalam bahasa Jawa?', c:['Buruk','Baik','Indah'], a:1},
+    {q:'Dalam bahasa Sunda, "punten" berarti…', c:['Permisi','Terima kasih','Sama-sama'], a:0},
+    {q:'Angklung berasal dari provinsi…', c:['Jawa Barat','Bali','Maluku'], a:0},
+    {q:'Upacara adat Jawa untuk 7 bulan kehamilan disebut…', c:['Tedhak Sinten','Mitoni','Siraman'], a:1},
+    {q:'Rumah adat Toraja bernama…', c:['Tongkonan','Joglo','Gadang'], a:0},
+    {q:'"Gue" dalam bahasa Betawi berarti…', c:['Dia','Saya','Kamu'], a:1},
+    {q:'Makanan sagu kental khas Papua/Maluku adalah…', c:['Papeda','Pempek','Gudeg'], a:0},
+    {q:'Tari tradisional Bali yang terkenal adalah…', c:['Pendet','Serimpi','Saman'], a:0},
+    {q:'Dalam bahasa Minang, "Uni" berarti…', c:['Adik laki-laki','Kakak perempuan','Nenek'], a:1},
+    {q:'Sapaan Bugis "Salama\'" artinya…', c:['Selamat/Salam','Maaf','Mari'], a:0},
+    {q:'Gambar pakaian adat ini berasal dari provinsi…', img:'aceh.jpg', c:['Aceh','NTT','Riau'], a:0},
+    {q:'Ini adalah makanan apa?', img:'pempek2.jpg', c:['Pempek','Rawon','Lontong Balap'], a:0},
+    {q:'Alat musik pada gambar bernama…', img:'kolintang.jpg', c:['Sasando','Kolintang','Talempong'], a:1},
+    {q:'Tarian pada gambar dikenal sebagai…', img:'saman.jpg', c:['Saman','Jaipong','Zapin'], a:0},
+    {q:'Rumah adat pada gambar ini adalah…', img:'gadang.jpg', c:['Honai','Gadang','Panilihi'], a:1}
+  ];
+
+  let index = 0;
+  const answers = Array(QUESTIONS.length).fill(null); // simpan pilihan user
+  const qbox = document.getElementById('qbox');
+  const bar  = document.getElementById('bar');
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function render(){
+    const item = QUESTIONS[index];
+    counter.textContent = (index+1) + ' / ' + QUESTIONS.length;
+    bar.style.width = ((index)/QUESTIONS.length*100)+'%';
+
+    if(item.img){
+      qbox.innerHTML = `
+        <div class="qrow">
+          <img class="qthumb" src="${item.img}" alt="Gambar soal">
+          <div>
+            <div class="qtitle">${index+1}) ${item.q}</div>
+            <div class="choices">
+              ${item.c.map((t,i)=>`<button class="choice ${answers[index]===i?'picked':''}" data-i="${i}">${String.fromCharCode(97+i)}) ${t}</button>`).join('')}
+            </div>
+            <div class="small" style="margin-top:6px">Tip: Pilih jawaban lalu klik Next/Previous. Pilihanmu disimpan otomatis.</div>
+          </div>
+        </div>
+      `;
+    } else {
+      qbox.innerHTML = `
+        <div class="qtitle">${index+1}) ${item.q}</div>
+        <div class="choices">
+          ${item.c.map((t,i)=>`<button class="choice ${answers[index]===i?'picked':''}" data-i="${i}">${String.fromCharCode(97+i)}) ${t}</button>`).join('')}
+        </div>
+        <div class="small" style="margin-top:6px">Tip: Pilih jawaban lalu klik Next/Previous. Pilihanmu disimpan otomatis.</div>
+      `;
+    }
+
+    qbox.querySelectorAll('.choice').forEach(btn=>{
+      btn.onclick = ()=>{
+        const i = Number(btn.dataset.i);
+        answers[index] = i;
+        qbox.querySelectorAll('.choice').forEach(b=>b.classList.remove('picked'));
+        btn.classList.add('picked');
+      };
+    });
+
+    prevBtn.disabled = (index===0);
+    nextBtn.style.display = (index===QUESTIONS.length-1)?'none':'inline-flex';
+    submitBtn.style.display = (index===QUESTIONS.length-1)?'inline-flex':'none';
+  }
+  render();
+
+  prevBtn.onclick = ()=>{ if(index>0){ index--; render(); } };
+  nextBtn.onclick = ()=>{ if(index<QUESTIONS.length-1){ index++; render(); } };
+
+  // swipe
+  let startX=0;
+  qbox.addEventListener('touchstart',e=>{ startX = e.touches[0].clientX; },{passive:true});
+  qbox.addEventListener('touchend',e=>{
+    const dx = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dx)>40){
+      if(dx<0 && index<QUESTIONS.length-1){ index++; render(); }
+      if(dx>0 && index>0){ index--; render(); }
+    }
+  });
+
+  // ====== HASIL ======
+  const modal = document.getElementById('resultModal');
+  const resTitle = document.getElementById('resTitle');
+  const resSubtitle = document.getElementById('resSubtitle');
+  const resTag = document.getElementById('resTag');
+  const resList = document.getElementById('resList');
+  const resOk = document.getElementById('resOk');
+
+  function gradeText(score){
+    if(score>=95) return {label:'Very Good', cls:'ok'};
+    if(score>=80) return {label:'Good', cls:'ok'};
+    if(score>=70) return {label:'Notbad', cls:'warn'};
+    return {label:'You Should Try again', cls:'bad'};
+  }
+
+  submitBtn.onclick = ()=>{
+    let correct = 0;
+    answers.forEach((ans,i)=>{ if(ans===QUESTIONS[i].a) correct++; });
+    const score = Math.round(correct/QUESTIONS.length*100);
+    document.getElementById('score').textContent = score;
+    bar.style.width = '100%';
+
+    // detail
+    resList.innerHTML = QUESTIONS.map((q,i)=>{
+      const user = answers[i];
+      const ok = (user===q.a);
+      const yourAns = (user!=null)? q.c[user] : '(kosong)';
+      const key = q.c[q.a];
+      return `
+        <div class="row ${ok?'good':'fail'}">
+          <div><b>${i+1}) ${q.q}</b></div>
+          ${q.img ? `<img src="${q.img}" alt="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid #eee">` : ``}
+          <div class="small">Jawaban kamu: <b>${yourAns}</b> ${ok? '✅' : '❌'}</div>
+          ${ok? '' : `<div class="small">Kunci: <b>${key}</b></div>`}
+        </div>
+      `;
+    }).join('');
+
+    // header + tag
+    resTitle.textContent = 'Hasil Quiz';
+    resSubtitle.textContent = `Benar ${correct} dari ${QUESTIONS.length} soal — Skor ${score}/100`;
+    const g = gradeText(score);
+    resTag.textContent = g.label + ` (${score})`;
+    resTag.className = 'tag ' + (g.cls==='ok' ? 'ok' : g.cls==='warn' ? 'warn' : 'bad');
+
+    modal.classList.add('show');
+  };
+
+  document.getElementById('resOk').onclick = ()=>{ modal.classList.remove('show'); };
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('show'); });
+</script>
+</body>
+</html>
